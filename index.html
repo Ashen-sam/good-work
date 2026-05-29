@@ -29,20 +29,129 @@
         --radius: 10px;
         --shadow:
           0 1px 4px rgba(26, 86, 219, 0.08), 0 2px 12px rgba(26, 86, 219, 0.06);
+        --gold: #f59e0b;
+        --silver: #6b7280;
+        --bronze: #b45309;
       }
-
       * {
         box-sizing: border-box;
         margin: 0;
         padding: 0;
       }
-
       body {
         font-family: "DM Sans", sans-serif;
         background: var(--bg);
         color: var(--text);
         font-size: 13px;
         min-height: 100vh;
+      }
+
+      /* ── LOADING SCREEN ── */
+      #splash-screen {
+        position: fixed;
+        inset: 0;
+        background: linear-gradient(
+          145deg,
+          #0f2e8f 0%,
+          #1a56db 50%,
+          #3b71f0 100%
+        );
+        z-index: 9999;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 0;
+        transition:
+          opacity 0.5s ease,
+          transform 0.5s ease;
+      }
+      #splash-screen.fade-out {
+        opacity: 0;
+        pointer-events: none;
+      }
+      .splash-logo-wrap {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 12px;
+        animation: splashPop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+      }
+      @keyframes splashPop {
+        from {
+          opacity: 0;
+          transform: scale(0.6) translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: scale(1) translateY(0);
+        }
+      }
+      .splash-icon {
+        width: 72px;
+        height: 72px;
+        background: rgba(255, 255, 255, 0.15);
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        border-radius: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 32px;
+        backdrop-filter: blur(10px);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+      }
+      .splash-title {
+        font-size: 22px;
+        font-weight: 700;
+        color: white;
+        letter-spacing: -0.5px;
+      }
+      .splash-sub {
+        font-size: 11px;
+        color: rgba(255, 255, 255, 0.7);
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        font-weight: 500;
+      }
+      .splash-dots {
+        display: flex;
+        gap: 7px;
+        margin-top: 40px;
+        animation: fadeInUp 0.4s 0.5s both;
+      }
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      .splash-dot {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.4);
+        animation: dotPulse 1.2s ease-in-out infinite;
+      }
+      .splash-dot:nth-child(2) {
+        animation-delay: 0.2s;
+      }
+      .splash-dot:nth-child(3) {
+        animation-delay: 0.4s;
+      }
+      @keyframes dotPulse {
+        0%,
+        100% {
+          background: rgba(255, 255, 255, 0.3);
+          transform: scale(1);
+        }
+        50% {
+          background: rgba(255, 255, 255, 0.95);
+          transform: scale(1.3);
+        }
       }
 
       /* ── PWA INSTALL BANNER ── */
@@ -102,7 +211,6 @@
         height: 22px;
         border-radius: 50%;
         font-size: 13px;
-        line-height: 1;
         cursor: pointer;
         display: flex;
         align-items: center;
@@ -200,6 +308,7 @@
       }
       .form-group {
         margin-bottom: 14px;
+        position: relative;
       }
       .form-label {
         display: block;
@@ -220,10 +329,34 @@
         color: var(--text);
         background: var(--white);
         outline: none;
-        transition: border-color 0.15s;
+        transition:
+          border-color 0.15s,
+          box-shadow 0.15s;
       }
       .form-input:focus {
         border-color: var(--blue);
+        box-shadow: 0 0 0 3px rgba(26, 86, 219, 0.08);
+      }
+      .form-input.input-error {
+        border-color: #dc2626;
+      }
+      .form-input.input-success {
+        border-color: var(--success);
+      }
+      .field-hint {
+        font-size: 10px;
+        margin-top: 4px;
+        padding: 0 2px;
+        min-height: 14px;
+      }
+      .field-hint.error {
+        color: #dc2626;
+      }
+      .field-hint.success {
+        color: var(--success);
+      }
+      .field-hint.info {
+        color: var(--text-muted);
       }
       .btn {
         width: 100%;
@@ -248,6 +381,10 @@
       .btn-primary:hover {
         opacity: 0.9;
       }
+      .btn-primary:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
       .auth-toggle {
         text-align: center;
         margin-top: 16px;
@@ -268,30 +405,25 @@
         margin-bottom: 14px;
         display: none;
       }
-
-      /* ── CONFIG NOTICE (shown when BIN_ID not set) ── */
-      .config-notice {
-        background: #fef3c7;
-        border: 1.5px solid #f59e0b;
-        border-radius: 10px;
-        padding: 12px 14px;
-        font-size: 11px;
-        color: #92400e;
-        margin-bottom: 16px;
-        line-height: 1.6;
+      .auth-success {
+        background: var(--success-bg);
+        color: var(--success);
+        border-radius: 8px;
+        padding: 9px 12px;
+        font-size: 12px;
+        margin-bottom: 14px;
         display: none;
       }
-      .config-notice strong {
-        font-weight: 700;
-        display: block;
-        margin-bottom: 4px;
-      }
-      .config-notice code {
-        background: rgba(0, 0, 0, 0.08);
-        border-radius: 4px;
-        padding: 1px 5px;
-        font-family: "DM Mono", monospace;
-        font-size: 10px;
+      .pass-toggle {
+        position: absolute;
+        right: 10px;
+        top: 32px;
+        background: none;
+        border: none;
+        color: var(--text-muted);
+        cursor: pointer;
+        font-size: 14px;
+        padding: 2px;
       }
 
       /* ── PWA HELP MODAL ── */
@@ -559,9 +691,10 @@
         display: flex;
         padding: 0 16px;
         gap: 0;
+        overflow-x: auto;
       }
       .tab-btn {
-        padding: 11px 14px;
+        padding: 11px 12px;
         font-size: 12px;
         font-weight: 600;
         font-family: "DM Sans", sans-serif;
@@ -914,7 +1047,380 @@
         font-weight: 700;
       }
 
-      /* ── LOADING ── */
+      /* ── LEADERBOARD TAB ── */
+      #tab-leaderboard {
+        position: relative;
+      }
+      .lb-locked-overlay {
+        position: absolute;
+        inset: 0;
+        background: rgba(245, 247, 251, 0.92);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        z-index: 10;
+        border-radius: 0;
+        padding: 24px;
+        backdrop-filter: blur(4px);
+        animation: fadeIn 0.3s ease;
+      }
+      .lb-lock-card {
+        background: var(--white);
+        border: 1px solid var(--border);
+        border-radius: 18px;
+        padding: 32px 24px;
+        text-align: center;
+        max-width: 280px;
+        width: 100%;
+        box-shadow: 0 8px 32px rgba(26, 86, 219, 0.12);
+      }
+      .lb-lock-icon {
+        font-size: 40px;
+        margin-bottom: 12px;
+      }
+      .lb-lock-title {
+        font-size: 16px;
+        font-weight: 700;
+        color: var(--text);
+        margin-bottom: 6px;
+      }
+      .lb-lock-desc {
+        font-size: 12px;
+        color: var(--text-muted);
+        line-height: 1.6;
+        margin-bottom: 18px;
+      }
+      .lb-progress-row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 18px;
+      }
+      .lb-progress-dots {
+        display: flex;
+        gap: 6px;
+        flex: 1;
+      }
+      .lb-dot {
+        flex: 1;
+        height: 8px;
+        border-radius: 4px;
+        background: var(--border);
+        transition: background 0.4s ease;
+      }
+      .lb-dot.filled {
+        background: var(--blue);
+      }
+      .lb-dot.partial {
+        background: linear-gradient(90deg, var(--blue) 50%, var(--border) 50%);
+      }
+      .lb-progress-label {
+        font-size: 11px;
+        font-family: "DM Mono", monospace;
+        color: var(--blue);
+        font-weight: 700;
+        white-space: nowrap;
+      }
+      .lb-header {
+        background: linear-gradient(
+          135deg,
+          #0f2e8f 0%,
+          #1a56db 60%,
+          #3b71f0 100%
+        );
+        border-radius: var(--radius);
+        padding: 20px 16px;
+        margin-bottom: 16px;
+        color: white;
+        text-align: center;
+      }
+      .lb-header-trophy {
+        font-size: 32px;
+        margin-bottom: 6px;
+      }
+      .lb-header-title {
+        font-size: 16px;
+        font-weight: 700;
+        letter-spacing: -0.3px;
+      }
+      .lb-header-sub {
+        font-size: 11px;
+        opacity: 0.75;
+        margin-top: 3px;
+      }
+      .lb-list {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+      .lb-item {
+        background: var(--white);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 14px 16px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        box-shadow: var(--shadow);
+        transition: transform 0.15s;
+        animation: slideInLb 0.35s ease both;
+      }
+      .lb-item:nth-child(1) {
+        animation-delay: 0.05s;
+      }
+      .lb-item:nth-child(2) {
+        animation-delay: 0.1s;
+      }
+      .lb-item:nth-child(3) {
+        animation-delay: 0.15s;
+      }
+      .lb-item:nth-child(4) {
+        animation-delay: 0.2s;
+      }
+      .lb-item:nth-child(5) {
+        animation-delay: 0.25s;
+      }
+      @keyframes slideInLb {
+        from {
+          opacity: 0;
+          transform: translateX(-12px);
+        }
+        to {
+          opacity: 1;
+          transform: translateX(0);
+        }
+      }
+      .lb-item.rank-1 {
+        border-color: #f59e0b;
+        background: linear-gradient(135deg, #fffbeb, #fff);
+      }
+      .lb-item.rank-2 {
+        border-color: #d1d5db;
+        background: linear-gradient(135deg, #f9fafb, #fff);
+      }
+      .lb-item.rank-3 {
+        border-color: #d97706;
+        background: linear-gradient(135deg, #fef3c7, #fff);
+      }
+      .lb-item.is-me {
+        border-color: var(--blue);
+        background: linear-gradient(135deg, #e8f0fe, #fff);
+      }
+      .lb-rank {
+        font-size: 18px;
+        width: 28px;
+        text-align: center;
+        flex-shrink: 0;
+      }
+      .lb-rank-num {
+        font-size: 13px;
+        font-weight: 700;
+        font-family: "DM Mono", monospace;
+        color: var(--text-muted);
+      }
+      .lb-info {
+        flex: 1;
+      }
+      .lb-name {
+        font-size: 13px;
+        font-weight: 700;
+        color: var(--text);
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .lb-you-tag {
+        font-size: 9px;
+        background: var(--blue);
+        color: white;
+        border-radius: 8px;
+        padding: 1px 6px;
+        font-weight: 700;
+        letter-spacing: 0.3px;
+      }
+      .lb-works-label {
+        font-size: 10px;
+        color: var(--text-muted);
+        margin-top: 2px;
+      }
+      .lb-score {
+        text-align: right;
+      }
+      .lb-score-val {
+        font-size: 20px;
+        font-weight: 700;
+        font-family: "DM Mono", monospace;
+        color: var(--blue);
+        letter-spacing: -0.5px;
+      }
+      .lb-score-label {
+        font-size: 9px;
+        color: var(--text-muted);
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+        font-weight: 600;
+      }
+      .lb-empty {
+        text-align: center;
+        padding: 32px 16px;
+      }
+      .lb-refresh-btn {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        margin: 0 auto 14px;
+        background: var(--blue-light);
+        color: var(--blue);
+        border: 1.5px solid var(--blue);
+        border-radius: 8px;
+        padding: 7px 14px;
+        font-size: 11px;
+        font-weight: 700;
+        font-family: "DM Sans", sans-serif;
+        cursor: pointer;
+        transition: all 0.15s;
+      }
+      .lb-refresh-btn:hover {
+        background: var(--blue);
+        color: white;
+      }
+      .lb-my-rank-card {
+        background: var(--blue);
+        color: white;
+        border-radius: var(--radius);
+        padding: 12px 16px;
+        margin-top: 14px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .lb-my-rank-label {
+        font-size: 10px;
+        opacity: 0.8;
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+        font-weight: 600;
+      }
+      .lb-my-rank-val {
+        font-size: 18px;
+        font-weight: 700;
+        font-family: "DM Mono", monospace;
+      }
+
+      /* ── SPAM GUARD MODAL ── */
+      .spam-modal-backdrop {
+        position: fixed;
+        inset: 0;
+        background: rgba(15, 23, 60, 0.5);
+        z-index: 700;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.25s ease;
+      }
+      .spam-modal-backdrop.visible {
+        opacity: 1;
+        pointer-events: all;
+      }
+      .spam-modal {
+        background: var(--white);
+        border-radius: 18px;
+        max-width: 300px;
+        width: 100%;
+        padding: 28px 22px;
+        box-shadow: 0 8px 40px rgba(26, 86, 219, 0.18);
+        transform: scale(0.92) translateY(12px);
+        transition: transform 0.25s ease;
+        text-align: center;
+      }
+      .spam-modal-backdrop.visible .spam-modal {
+        transform: scale(1) translateY(0);
+      }
+      .spam-emoji {
+        font-size: 38px;
+        margin-bottom: 10px;
+        display: block;
+        animation: wobble 0.6s ease;
+      }
+      @keyframes wobble {
+        0%,
+        100% {
+          transform: rotate(0);
+        }
+        20% {
+          transform: rotate(-12deg);
+        }
+        40% {
+          transform: rotate(12deg);
+        }
+        60% {
+          transform: rotate(-8deg);
+        }
+        80% {
+          transform: rotate(6deg);
+        }
+      }
+      .spam-title {
+        font-size: 16px;
+        font-weight: 700;
+        color: var(--text);
+        margin-bottom: 8px;
+        letter-spacing: -0.3px;
+      }
+      .spam-msg {
+        font-size: 12px;
+        color: var(--text-muted);
+        line-height: 1.6;
+        margin-bottom: 18px;
+      }
+      .spam-user-highlight {
+        font-weight: 700;
+        color: var(--blue);
+      }
+      .spam-btns {
+        display: flex;
+        gap: 8px;
+      }
+      .spam-btn-yes {
+        flex: 1;
+        padding: 10px;
+        border: none;
+        border-radius: 9px;
+        background: var(--blue);
+        color: white;
+        font-family: "DM Sans", sans-serif;
+        font-size: 12px;
+        font-weight: 700;
+        cursor: pointer;
+      }
+      .spam-btn-no {
+        flex: 1;
+        padding: 10px;
+        border: 1.5px solid var(--border);
+        border-radius: 9px;
+        background: var(--white);
+        color: var(--text-muted);
+        font-family: "DM Sans", sans-serif;
+        font-size: 12px;
+        font-weight: 600;
+        cursor: pointer;
+      }
+      .spam-btn-no:hover {
+        border-color: #dc2626;
+        color: #dc2626;
+      }
+      .spam-timer {
+        font-size: 10px;
+        color: var(--text-light);
+        margin-top: 12px;
+        font-family: "DM Mono", monospace;
+      }
+
+      /* ── LOADING OVERLAY ── */
       .loading-overlay {
         position: fixed;
         inset: 0;
@@ -1082,7 +1588,7 @@
         margin-top: 12px;
       }
 
-      /* ── FLOATING HELP BUTTON (in-app) ── */
+      /* ── FLOATING HELP ── */
       .floating-help-btn {
         position: fixed;
         bottom: 24px;
@@ -1110,10 +1616,7 @@
         opacity: 0.88;
         transform: scale(1.08);
       }
-      .floating-help-btn:active {
-        transform: scale(0.95);
-      }
-      /* ── RESPONSIVE ── */
+
       @media (min-width: 480px) {
         .auth-card {
           padding: 40px 36px;
@@ -1127,13 +1630,27 @@
       }
       @media (max-width: 340px) {
         .tab-btn {
-          padding: 10px 10px;
+          padding: 10px 9px;
           font-size: 11px;
         }
       }
     </style>
   </head>
   <body>
+    <!-- SPLASH / LOADING SCREEN -->
+    <div id="splash-screen">
+      <div class="splash-logo-wrap">
+        <div class="splash-icon">✦</div>
+        <div class="splash-title">Good Works</div>
+        <div class="splash-sub">Daily Tracker</div>
+      </div>
+      <div class="splash-dots">
+        <div class="splash-dot"></div>
+        <div class="splash-dot"></div>
+        <div class="splash-dot"></div>
+      </div>
+    </div>
+
     <!-- PWA INSTALL BANNER -->
     <div id="pwa-banner">
       <div class="pwa-banner-icon">📲</div>
@@ -1191,8 +1708,7 @@
             <div class="step-body">
               <div class="step-title">Open in Safari</div>
               <div class="step-desc">
-                Make sure you're using <strong>Safari</strong> browser. This
-                won't work in Chrome or other browsers on iPhone.
+                Make sure you're using <strong>Safari</strong> browser.
               </div>
             </div>
           </div>
@@ -1203,7 +1719,7 @@
               <div class="step-desc">
                 At the bottom of Safari, tap the
                 <span class="step-icon-inline">⬆</span>
-                <strong>Share</strong> icon (box with an arrow pointing up).
+                <strong>Share</strong> icon.
               </div>
             </div>
           </div>
@@ -1212,19 +1728,18 @@
             <div class="step-body">
               <div class="step-title">Tap "Add to Home Screen"</div>
               <div class="step-desc">
-                Scroll down the share sheet and tap
-                <span class="step-tag">+ Add to Home Screen</span>, then tap
-                <span class="step-tag">Add</span> to confirm.
+                Scroll down and tap
+                <span class="step-tag">+ Add to Home Screen</span>, then
+                <span class="step-tag">Add</span>.
               </div>
             </div>
           </div>
           <div class="install-step">
             <div class="step-num">4</div>
             <div class="step-body">
-              <div class="step-title">Done! Open from your home screen</div>
+              <div class="step-title">Done!</div>
               <div class="step-desc">
-                The Good Works icon will appear on your home screen. Tap it to
-                open the app in full screen — no browser bar!
+                The Good Works icon will appear on your home screen.
               </div>
             </div>
           </div>
@@ -1235,8 +1750,7 @@
             <div class="step-body">
               <div class="step-title">Open in Chrome</div>
               <div class="step-desc">
-                Make sure you're using <strong>Google Chrome</strong> browser on
-                your Android device.
+                Make sure you're using <strong>Google Chrome</strong>.
               </div>
             </div>
           </div>
@@ -1245,9 +1759,8 @@
             <div class="step-body">
               <div class="step-title">Tap the menu (⋮)</div>
               <div class="step-desc">
-                Tap the <span class="step-icon-inline">⋮</span>
-                <strong>three-dot menu</strong> in the top-right corner of
-                Chrome.
+                Tap the <span class="step-icon-inline">⋮</span> three-dot menu
+                in the top-right corner.
               </div>
             </div>
           </div>
@@ -1256,18 +1769,17 @@
             <div class="step-body">
               <div class="step-title">Tap "Add to Home screen"</div>
               <div class="step-desc">
-                Select <span class="step-tag">Add to Home screen</span> from the
-                menu, then tap <span class="step-tag">Add</span> to confirm.
+                Select <span class="step-tag">Add to Home screen</span> then
+                <span class="step-tag">Add</span>.
               </div>
             </div>
           </div>
           <div class="install-step">
             <div class="step-num">4</div>
             <div class="step-body">
-              <div class="step-title">Done! Open from your home screen</div>
+              <div class="step-title">Done!</div>
               <div class="step-desc">
-                The Good Works icon will appear on your home screen. It opens
-                like a native app — fast and full screen!
+                Opens like a native app — fast and full screen!
               </div>
             </div>
           </div>
@@ -1275,6 +1787,29 @@
         <div class="pwa-modal-tip">
           ✅ Once installed, it works like a real app — no browser needed!
         </div>
+      </div>
+    </div>
+
+    <!-- SPAM GUARD MODAL -->
+    <div class="spam-modal-backdrop" id="spam-modal">
+      <div class="spam-modal">
+        <span class="spam-emoji">🤔</span>
+        <div class="spam-title">
+          Hold on, <span class="spam-user-highlight" id="spam-username"></span>!
+        </div>
+        <div class="spam-msg" id="spam-msg-text">
+          You've been adding good works really quickly. Did you actually do all
+          of these, or are some of them made up?
+        </div>
+        <div class="spam-btns">
+          <button class="spam-btn-yes" onclick="spamConfirm(true)">
+            Yes, I really did! ✦
+          </button>
+          <button class="spam-btn-no" onclick="spamConfirm(false)">
+            Let me remove that
+          </button>
+        </div>
+        <div class="spam-timer" id="spam-timer-text"></div>
       </div>
     </div>
 
@@ -1286,11 +1821,10 @@
         <div class="welcome-name" id="welcome-username"></div>
         <div class="welcome-divider"></div>
         <div class="welcome-msg">
-          This is your space to <strong>focus on the good</strong>.<br /><br />
-          Every small act of kindness, every prayer, every moment of service —
-          it all matters. Here you can
-          <strong>record, reflect, and grow</strong> by seeing the positive
-          impact you make each day.
+          This is your space to
+          <strong>focus on the good</strong>.<br /><br />Every small act of
+          kindness, every prayer, every moment of service — it all matters. Here
+          you can <strong>record, reflect, and grow</strong>.
         </div>
         <div class="welcome-pillars">
           <span class="welcome-pill">✦ Kindness</span>
@@ -1324,7 +1858,7 @@
           <button
             class="help-btn"
             onclick="openPwaModal()"
-            title="How to install as app"
+            title="Install as app"
           >
             ?
           </button>
@@ -1340,9 +1874,11 @@
               class="form-input"
               id="login-user"
               type="text"
-              placeholder="Enter username"
+              placeholder="Enter your username"
               autocomplete="off"
+              oninput="validateLoginUsername(this)"
             />
+            <div class="field-hint" id="login-user-hint"></div>
           </div>
           <div class="form-group">
             <label class="form-label">Passcode</label>
@@ -1350,10 +1886,22 @@
               class="form-input"
               id="login-pass"
               type="password"
-              placeholder="Enter passcode"
+              placeholder="Enter your passcode"
+              oninput="validateLoginPass(this)"
             />
+            <button
+              type="button"
+              class="pass-toggle"
+              onclick="togglePass('login-pass', this)"
+              tabindex="-1"
+            >
+              👁
+            </button>
+            <div class="field-hint" id="login-pass-hint"></div>
           </div>
-          <button class="btn btn-primary" onclick="doLogin()">Sign In</button>
+          <button class="btn btn-primary" id="login-btn" onclick="doLogin()">
+            Sign In
+          </button>
           <div class="auth-toggle">
             No account? <span onclick="showRegister()">Create one</span>
           </div>
@@ -1369,9 +1917,11 @@
               class="form-input"
               id="reg-user"
               type="text"
-              placeholder="Choose a username"
+              placeholder="Choose a username (min 3 chars)"
               autocomplete="off"
+              oninput="validateRegUsername(this)"
             />
+            <div class="field-hint" id="reg-user-hint"></div>
           </div>
           <div class="form-group">
             <label class="form-label">Passcode</label>
@@ -1379,10 +1929,31 @@
               class="form-input"
               id="reg-pass"
               type="password"
-              placeholder="Choose a passcode"
+              placeholder="Choose a passcode (min 4 chars)"
+              oninput="validateRegPass(this)"
             />
+            <button
+              type="button"
+              class="pass-toggle"
+              onclick="togglePass('reg-pass', this)"
+              tabindex="-1"
+            >
+              👁
+            </button>
+            <div class="field-hint" id="reg-pass-hint"></div>
           </div>
-          <button class="btn btn-primary" onclick="doRegister()">
+          <div class="form-group">
+            <label class="form-label">Confirm Passcode</label>
+            <input
+              class="form-input"
+              id="reg-pass2"
+              type="password"
+              placeholder="Repeat your passcode"
+              oninput="validateRegPass2(this)"
+            />
+            <div class="field-hint" id="reg-pass2-hint"></div>
+          </div>
+          <button class="btn btn-primary" id="reg-btn" onclick="doRegister()">
             Create Account
           </button>
           <div class="auth-toggle">
@@ -1417,7 +1988,12 @@
         <button class="tab-btn" onclick="switchTab('history', this)">
           History
         </button>
+        <button class="tab-btn" onclick="switchTab('leaderboard', this)">
+          🏆 Board
+        </button>
       </div>
+
+      <!-- TODAY -->
       <div class="tab-content active" id="tab-today">
         <div class="date-header" id="today-date-label"></div>
         <div class="add-card">
@@ -1460,6 +2036,8 @@
         <div class="section-title" id="today-count-label">Today's Works</div>
         <div class="works-list" id="today-list"></div>
       </div>
+
+      <!-- PROGRESS -->
       <div class="tab-content" id="tab-progress">
         <div class="streak-card">
           <div class="streak-icon">🔥</div>
@@ -1489,34 +2067,66 @@
         <div class="section-title">By Category</div>
         <div id="cat-progress-list"></div>
       </div>
+
+      <!-- HISTORY -->
       <div class="tab-content" id="tab-history">
         <div class="section-title">All Past Works</div>
         <div id="history-list"></div>
       </div>
-      <button
-        class="floating-help-btn"
-        onclick="openPwaModal()"
-        title="How to install as app"
-      >
-        ?
-      </button>
+
+      <!-- LEADERBOARD -->
+      <div class="tab-content" id="tab-leaderboard">
+        <div id="lb-locked-overlay" class="lb-locked-overlay">
+          <div class="lb-lock-card">
+            <div class="lb-lock-icon">🏆</div>
+            <div class="lb-lock-title">Unlock the Leaderboard</div>
+            <div class="lb-lock-desc">
+              Complete <strong>3 good works</strong> to join the leaderboard and
+              see the top contributors in our community!
+            </div>
+            <div class="lb-progress-row">
+              <div class="lb-progress-dots" id="lb-dots"></div>
+              <div class="lb-progress-label" id="lb-dots-label">0 / 3</div>
+            </div>
+            <div
+              style="
+                font-size: 11px;
+                color: var(--text-muted);
+                line-height: 1.6;
+              "
+            >
+              Keep doing good — your acts of kindness will unlock this space.
+            </div>
+          </div>
+        </div>
+        <div id="lb-content">
+          <div class="lb-header">
+            <div class="lb-header-trophy">🏆</div>
+            <div class="lb-header-title">Community Leaderboard</div>
+            <div class="lb-header-sub">Top good workers of all time</div>
+          </div>
+          <button class="lb-refresh-btn" onclick="renderLeaderboard()">
+            ↻ Refresh
+          </button>
+          <div class="lb-list" id="lb-list"></div>
+          <div id="lb-my-rank-section"></div>
+        </div>
+      </div>
     </div>
 
-    <script>
-      // ─────────────────────────────────────────────────────────────────
-      //  ★  CONFIGURE THESE TWO VALUES — same in every deployed file  ★
-      //
-      //  Step 1: Go to https://jsonbin.io and sign up (free)
-      //  Step 2: Create an API Key under Account > API Keys
-      //  Step 3: Create a new Bin with content: {"users":{},"works":{}}
-      //  Step 4: Copy the Bin ID from the bin's URL or metadata
-      //  Step 5: Paste both values below and redeploy
-      //
-      const BIN_ID = "6a195eaaddf5aa59f7738ec8"; // e.g. '64f3a1b2e123456789abcdef'
-      const MASTER_KEY =
-        "$2a$10$iP5RJXsAb1nSoAOnFpxq9.s0d2XPGPfZgiizNmrNEcxValVz.gb9u"; // e.g. '$2a$10$...' (your JSONBin master key)
-      // ─────────────────────────────────────────────────────────────────
+    <button
+      class="floating-help-btn"
+      onclick="openPwaModal()"
+      title="How to install as app"
+    >
+      ?
+    </button>
 
+    <script>
+      // ─── CONFIG ───────────────────────────────────────────────────────
+      const BIN_ID = "6a195eaaddf5aa59f7738ec8";
+      const MASTER_KEY =
+        "$2a$10$iP5RJXsAb1nSoAOnFpxq9.s0d2XPGPfZgiizNmrNEcxValVz.gb9u";
       const JSONBIN_URL = "https://api.jsonbin.io/v3/b";
 
       function getHeaders() {
@@ -1526,38 +2136,48 @@
         };
       }
 
-      // ── STATE ────────────────────────────────────────────────────────
+      // ─── STATE ────────────────────────────────────────────────────────
       let appData = { users: {}, works: {} };
       let currentUser = "";
       let selectedCat = "Kindness";
+      let spamPendingWork = null;
+      let spamResolve = null;
 
-      // ── PWA ──────────────────────────────────────────────────────────
+      // Spam tracking — per session
+      const spamTracker = {}; // { username: [timestamps] }
+      const SPAM_WINDOW_MS = 90 * 1000; // 90 seconds
+      const SPAM_THRESHOLD = 4; // 4 works in 90s triggers check
+
+      // ─── SPLASH SCREEN ───────────────────────────────────────────────
+      function hideSplash() {
+        const splash = document.getElementById("splash-screen");
+        splash.classList.add("fade-out");
+        setTimeout(() => {
+          splash.style.display = "none";
+        }, 600);
+      }
+
+      // ─── PWA ──────────────────────────────────────────────────────────
       function initPwaBanner() {
         const dismissed = localStorage.getItem("gw_pwa_dismissed");
         const isStandalone =
           window.matchMedia("(display-mode: standalone)").matches ||
           window.navigator.standalone === true;
-        if (!dismissed && !isStandalone) {
+        if (!dismissed && !isStandalone)
           document.getElementById("pwa-banner").classList.add("show");
-        }
-        const ua = navigator.userAgent;
-        switchOsTab(/android/i.test(ua) ? "android" : "ios");
+        switchOsTab(/android/i.test(navigator.userAgent) ? "android" : "ios");
       }
-
       function closePwaBanner() {
         document.getElementById("pwa-banner").classList.remove("show");
         localStorage.setItem("gw_pwa_dismissed", "1");
       }
-
       function openPwaModal() {
         switchOsTab(/android/i.test(navigator.userAgent) ? "android" : "ios");
         document.getElementById("pwa-modal").classList.add("visible");
       }
-
       function closePwaModal() {
         document.getElementById("pwa-modal").classList.remove("visible");
       }
-
       function switchOsTab(os) {
         document
           .getElementById("tab-ios")
@@ -1570,20 +2190,15 @@
         document.getElementById("steps-android").style.display =
           os === "android" ? "flex" : "none";
       }
-
       document
         .getElementById("pwa-modal")
         .addEventListener("click", function (e) {
           if (e.target === this) closePwaModal();
         });
 
-      // ── JSONBIN ──────────────────────────────────────────────────────
+      // ─── JSONBIN ──────────────────────────────────────────────────────
       async function loadData() {
-        // Guard: BIN_ID must be set
-        if (!BIN_ID || !MASTER_KEY) {
-          document.getElementById("config-notice").style.display = "block";
-          return;
-        }
+        if (!BIN_ID || !MASTER_KEY) return;
         showLoading(true);
         try {
           const r = await fetch(`${JSONBIN_URL}/${BIN_ID}/latest`, {
@@ -1592,14 +2207,11 @@
           if (!r.ok) throw new Error(`HTTP ${r.status}`);
           const j = await r.json();
           appData = j.record || { users: {}, works: {} };
-          // Ensure structure is valid
           if (!appData.users) appData.users = {};
           if (!appData.works) appData.works = {};
         } catch (e) {
           console.error("loadData error:", e);
-          showToast(
-            "Could not connect to storage — check your BIN_ID and MASTER_KEY",
-          );
+          showToast("Could not connect to storage");
         }
         showLoading(false);
       }
@@ -1619,40 +2231,159 @@
         }
       }
 
-      // ── WELCOME ──────────────────────────────────────────────────────
-      function showWelcome(username) {
-        document.getElementById("welcome-username").textContent =
-          username.charAt(0).toUpperCase() + username.slice(1);
-        setTimeout(
-          () =>
-            document.getElementById("welcome-modal").classList.add("visible"),
-          400,
-        );
-      }
-
-      function closeWelcome() {
-        document.getElementById("welcome-modal").classList.remove("visible");
-        const dismissed = localStorage.getItem("gw_pwa_dismissed");
-        const isStandalone =
-          window.matchMedia("(display-mode: standalone)").matches ||
-          window.navigator.standalone === true;
-        if (!dismissed && !isStandalone) {
-          setTimeout(
-            () => showToast("💡 Tap ? to install this app on your home screen"),
-            800,
-          );
+      // ─── AUTH VALIDATION ──────────────────────────────────────────────
+      function validateLoginUsername(input) {
+        const val = input.value.trim().toLowerCase();
+        const hint = document.getElementById("login-user-hint");
+        if (!val) {
+          hint.textContent = "";
+          input.className = "form-input";
+          return false;
         }
+        if (val.length < 2) {
+          hint.textContent = "Username too short";
+          hint.className = "field-hint error";
+          input.className = "form-input input-error";
+          return false;
+        }
+        if (!/^[a-z0-9_]+$/.test(val)) {
+          hint.textContent = "Only letters, numbers, underscores allowed";
+          hint.className = "field-hint error";
+          input.className = "form-input input-error";
+          return false;
+        }
+        hint.textContent = "";
+        input.className = "form-input";
+        return true;
+      }
+      function validateLoginPass(input) {
+        const val = input.value;
+        const hint = document.getElementById("login-pass-hint");
+        if (!val) {
+          hint.textContent = "";
+          input.className = "form-input";
+          return false;
+        }
+        if (val.length < 3) {
+          hint.textContent = "Passcode too short";
+          hint.className = "field-hint error";
+          input.className = "form-input input-error";
+          return false;
+        }
+        hint.textContent = "";
+        input.className = "form-input";
+        return true;
+      }
+      function validateRegUsername(input) {
+        const val = input.value.trim().toLowerCase();
+        const hint = document.getElementById("reg-user-hint");
+        if (!val) {
+          hint.textContent = "";
+          input.className = "form-input";
+          return;
+        }
+        if (val.length < 3) {
+          hint.textContent = "At least 3 characters required";
+          hint.className = "field-hint error";
+          input.className = "form-input input-error";
+          return;
+        }
+        if (!/^[a-z0-9_]+$/.test(val)) {
+          hint.textContent = "Only letters, numbers, underscores allowed";
+          hint.className = "field-hint error";
+          input.className = "form-input input-error";
+          return;
+        }
+        if (val.length > 20) {
+          hint.textContent = "Username too long (max 20)";
+          hint.className = "field-hint error";
+          input.className = "form-input input-error";
+          return;
+        }
+        // Live check against loaded users
+        if (appData.users[val]) {
+          hint.textContent = "Username already taken";
+          hint.className = "field-hint error";
+          input.className = "form-input input-error";
+          return;
+        }
+        hint.textContent = "✓ Username available";
+        hint.className = "field-hint success";
+        input.className = "form-input input-success";
+      }
+      function validateRegPass(input) {
+        const val = input.value;
+        const hint = document.getElementById("reg-pass-hint");
+        if (!val) {
+          hint.textContent = "";
+          input.className = "form-input";
+          return;
+        }
+        if (val.length < 4) {
+          hint.textContent = "At least 4 characters required";
+          hint.className = "field-hint error";
+          input.className = "form-input input-error";
+          return;
+        }
+        hint.textContent = "✓ Strong enough";
+        hint.className = "field-hint success";
+        input.className = "form-input input-success";
+        // Re-validate confirm
+        const c = document.getElementById("reg-pass2");
+        if (c.value) validateRegPass2(c);
+      }
+      function validateRegPass2(input) {
+        const val = input.value;
+        const pass1 = document.getElementById("reg-pass").value;
+        const hint = document.getElementById("reg-pass2-hint");
+        if (!val) {
+          hint.textContent = "";
+          input.className = "form-input";
+          return;
+        }
+        if (val !== pass1) {
+          hint.textContent = "Passcodes do not match";
+          hint.className = "field-hint error";
+          input.className = "form-input input-error";
+          return;
+        }
+        hint.textContent = "✓ Passcodes match";
+        hint.className = "field-hint success";
+        input.className = "form-input input-success";
+      }
+      function togglePass(id, btn) {
+        const inp = document.getElementById(id);
+        inp.type = inp.type === "password" ? "text" : "password";
+        btn.textContent = inp.type === "password" ? "👁" : "🙈";
       }
 
-      // ── AUTH ─────────────────────────────────────────────────────────
+      // ─── AUTH ACTIONS ─────────────────────────────────────────────────
       function showLogin() {
         document.getElementById("login-panel").style.display = "";
         document.getElementById("register-panel").style.display = "none";
+        // Clear fields
+        ["login-user", "login-pass"].forEach((id) => {
+          const el = document.getElementById(id);
+          el.value = "";
+          el.className = "form-input";
+        });
+        ["login-user-hint", "login-pass-hint"].forEach(
+          (id) => (document.getElementById(id).textContent = ""),
+        );
+        document.getElementById("login-error").style.display = "none";
       }
-
       function showRegister() {
         document.getElementById("login-panel").style.display = "none";
         document.getElementById("register-panel").style.display = "";
+        ["reg-user", "reg-pass", "reg-pass2"].forEach((id) => {
+          const el = document.getElementById(id);
+          el.value = "";
+          el.className = "form-input";
+        });
+        ["reg-user-hint", "reg-pass-hint", "reg-pass2-hint"].forEach(
+          (id) => (document.getElementById(id).textContent = ""),
+        );
+        document.getElementById("reg-error").style.display = "none";
       }
 
       async function doLogin() {
@@ -1662,23 +2393,49 @@
           .toLowerCase();
         const p = document.getElementById("login-pass").value;
         const err = document.getElementById("login-error");
-        if (!u || !p) {
-          showErr(err, "Please fill in all fields");
+        err.style.display = "none";
+
+        // Validate fields
+        if (!u) {
+          showErr(err, "Please enter your username");
+          return;
+        }
+        if (!/^[a-z0-9_]+$/.test(u)) {
+          showErr(err, "Invalid username format");
+          return;
+        }
+        if (!p) {
+          showErr(err, "Please enter your passcode");
           return;
         }
 
-        // Always fetch fresh data before login so we have the latest users
+        const btn = document.getElementById("login-btn");
+        btn.disabled = true;
+        btn.textContent = "Signing in…";
+
         await loadData();
 
         if (!appData.users[u]) {
-          showErr(err, "Username not found");
+          showErr(
+            err,
+            "Username not found — check spelling or create an account",
+          );
+          btn.disabled = false;
+          btn.textContent = "Sign In";
           return;
         }
         if (appData.users[u].pass !== btoa(p)) {
-          showErr(err, "Wrong passcode");
+          showErr(err, "Wrong passcode — please try again");
+          document.getElementById("login-pass").value = "";
+          document.getElementById("login-pass").className =
+            "form-input input-error";
+          btn.disabled = false;
+          btn.textContent = "Sign In";
           return;
         }
 
+        btn.disabled = false;
+        btn.textContent = "Sign In";
         err.style.display = "none";
         currentUser = u;
         localStorage.setItem("gw_user", u);
@@ -1691,25 +2448,61 @@
           .value.trim()
           .toLowerCase();
         const p = document.getElementById("reg-pass").value;
+        const p2 = document.getElementById("reg-pass2").value;
         const err = document.getElementById("reg-error");
-        if (!u || !p) {
-          showErr(err, "Please fill in all fields");
+        err.style.display = "none";
+
+        // Full validation
+        if (!u) {
+          showErr(err, "Please enter a username");
           return;
         }
-        if (u.length < 2) {
-          showErr(err, "Username too short");
+        if (u.length < 3) {
+          showErr(err, "Username must be at least 3 characters");
           return;
         }
-        if (p.length < 3) {
-          showErr(err, "Passcode too short");
+        if (u.length > 20) {
+          showErr(err, "Username too long (max 20 characters)");
+          return;
+        }
+        if (!/^[a-z0-9_]+$/.test(u)) {
+          showErr(
+            err,
+            "Username can only contain letters, numbers, underscores",
+          );
+          return;
+        }
+        if (!p) {
+          showErr(err, "Please enter a passcode");
+          return;
+        }
+        if (p.length < 4) {
+          showErr(err, "Passcode must be at least 4 characters");
+          return;
+        }
+        if (!p2) {
+          showErr(err, "Please confirm your passcode");
+          return;
+        }
+        if (p !== p2) {
+          showErr(err, "Passcodes do not match");
           return;
         }
 
-        // Always fetch fresh data before register to check for duplicates
+        const btn = document.getElementById("reg-btn");
+        btn.disabled = true;
+        btn.textContent = "Creating account…";
+
         await loadData();
 
         if (appData.users[u]) {
-          showErr(err, "Username already taken");
+          showErr(
+            err,
+            "That username is already taken — please choose another",
+          );
+          validateRegUsername(document.getElementById("reg-user"));
+          btn.disabled = false;
+          btn.textContent = "Create Account";
           return;
         }
 
@@ -1717,6 +2510,8 @@
         if (!appData.works[u]) appData.works[u] = [];
         await saveData();
 
+        btn.disabled = false;
+        btn.textContent = "Create Account";
         err.style.display = "none";
         currentUser = u;
         localStorage.setItem("gw_user", u);
@@ -1730,8 +2525,6 @@
         localStorage.removeItem("gw_user");
         document.getElementById("app-screen").style.display = "none";
         document.getElementById("auth-screen").style.display = "flex";
-        document.getElementById("login-user").value = "";
-        document.getElementById("login-pass").value = "";
         showLogin();
         initPwaBanner();
       }
@@ -1741,7 +2534,30 @@
         el.style.display = "block";
       }
 
-      // ── APP ENTER ────────────────────────────────────────────────────
+      // ─── WELCOME ──────────────────────────────────────────────────────
+      function showWelcome(username) {
+        document.getElementById("welcome-username").textContent =
+          username.charAt(0).toUpperCase() + username.slice(1);
+        setTimeout(
+          () =>
+            document.getElementById("welcome-modal").classList.add("visible"),
+          400,
+        );
+      }
+      function closeWelcome() {
+        document.getElementById("welcome-modal").classList.remove("visible");
+        const dismissed = localStorage.getItem("gw_pwa_dismissed");
+        const isStandalone =
+          window.matchMedia("(display-mode: standalone)").matches ||
+          window.navigator.standalone === true;
+        if (!dismissed && !isStandalone)
+          setTimeout(
+            () => showToast("💡 Tap ? to install this app on your home screen"),
+            800,
+          );
+      }
+
+      // ─── APP ENTER ────────────────────────────────────────────────────
       function enterApp() {
         document.getElementById("auth-screen").style.display = "none";
         document.getElementById("app-screen").style.display = "flex";
@@ -1751,22 +2567,20 @@
         renderToday();
         renderProgress();
         renderHistory();
+        updateLbLockState();
       }
 
-      // ── WORKS ─────────────────────────────────────────────────────────
+      // ─── WORKS ────────────────────────────────────────────────────────
       function myWorks() {
         if (!appData.works[currentUser]) appData.works[currentUser] = [];
         return appData.works[currentUser];
       }
-
       function today() {
         return new Date().toISOString().slice(0, 10);
       }
-
       function todayWorks() {
         return myWorks().filter((w) => w.date === today());
       }
-
       function selectCat(el) {
         document
           .querySelectorAll(".cat-chip")
@@ -1775,12 +2589,52 @@
         selectedCat = el.dataset.cat;
       }
 
+      // ─── SPAM GUARD ───────────────────────────────────────────────────
+      function trackSpam(username) {
+        const now = Date.now();
+        if (!spamTracker[username]) spamTracker[username] = [];
+        // Remove old timestamps outside window
+        spamTracker[username] = spamTracker[username].filter(
+          (t) => now - t < SPAM_WINDOW_MS,
+        );
+        spamTracker[username].push(now);
+        return spamTracker[username].length >= SPAM_THRESHOLD;
+      }
+
+      function showSpamModal(workText) {
+        return new Promise((resolve) => {
+          spamResolve = resolve;
+          document.getElementById("spam-username").textContent = currentUser;
+          const msgs = [
+            `You've added <strong>${spamTracker[currentUser]?.length || SPAM_THRESHOLD}+ good works</strong> in the last 90 seconds, <strong>${currentUser}</strong>. Did you genuinely do all of these?`,
+            `Whoa, that's a lot of good works really fast! Are these all real actions you actually took today?`,
+            `Just checking in — adding works very quickly. Are these genuine good deeds you actually did?`,
+          ];
+          document.getElementById("spam-msg-text").innerHTML =
+            msgs[Math.floor(Math.random() * msgs.length)];
+          document.getElementById("spam-timer-text").textContent =
+            "Your last entry is pending confirmation";
+          document.getElementById("spam-modal").classList.add("visible");
+        });
+      }
+
+      function spamConfirm(isReal) {
+        document.getElementById("spam-modal").classList.remove("visible");
+        if (spamResolve) {
+          spamResolve(isReal);
+          spamResolve = null;
+        }
+      }
+
       async function addWork() {
         const txt = document.getElementById("work-input").value.trim();
         if (!txt) {
           showToast("Write something first!");
           return;
         }
+
+        // Check spam
+        const isSpammy = trackSpam(currentUser);
 
         const work = {
           id: Date.now().toString(),
@@ -1794,12 +2648,24 @@
           }),
         };
 
+        if (isSpammy) {
+          const confirmed = await showSpamModal(txt);
+          if (!confirmed) {
+            // Remove last timestamp from tracker (they said it was fake)
+            if (spamTracker[currentUser]) spamTracker[currentUser].pop();
+            showToast("No worries — entry discarded");
+            document.getElementById("work-input").value = "";
+            return;
+          }
+        }
+
         myWorks().push(work);
         document.getElementById("work-input").value = "";
         await saveData();
         renderToday();
         renderProgress();
         renderHistory();
+        updateLbLockState();
         showToast("Good work added! ✦");
       }
 
@@ -1809,29 +2675,29 @@
         renderToday();
         renderProgress();
         renderHistory();
+        updateLbLockState();
       }
 
-      // ── RENDER ────────────────────────────────────────────────────────
+      // ─── RENDER TODAY ─────────────────────────────────────────────────
       function renderWorkItem(w, showDel = true) {
-        return `
-    <div class="work-item">
-      <div class="work-check">✓</div>
-      <div class="work-body">
-        <div class="work-text">${escHtml(w.text)}</div>
-        <div class="work-meta">
-          <span class="work-cat">${w.cat}</span>
-          <span class="work-time">${w.time}</span>
-        </div>
-      </div>
-      ${showDel ? `<button class="work-del" onclick="deleteWork('${w.id}')" title="Remove">×</button>` : ""}
-    </div>`;
+        return `<div class="work-item">
+          <div class="work-check">✓</div>
+          <div class="work-body">
+            <div class="work-text">${escHtml(w.text)}</div>
+            <div class="work-meta">
+              <span class="work-cat">${w.cat}</span>
+              <span class="work-time">${w.time}</span>
+            </div>
+          </div>
+          ${showDel ? `<button class="work-del" onclick="deleteWork('${w.id}')" title="Remove">×</button>` : ""}
+        </div>`;
       }
 
       function renderToday() {
         const tw = todayWorks();
         const list = document.getElementById("today-list");
-        const label = document.getElementById("today-count-label");
-        label.textContent = `Today's Works (${tw.length})`;
+        document.getElementById("today-count-label").textContent =
+          `Today's Works (${tw.length})`;
         list.innerHTML =
           tw.length === 0
             ? `<div class="empty-state"><div class="empty-icon">☀️</div><div class="empty-text">No works yet today</div><div class="empty-sub">Add your first good work above</div></div>`
@@ -1844,16 +2710,13 @@
       function renderProgress() {
         const all = myWorks();
         const tw = todayWorks();
-
         document.getElementById("stat-total").textContent = all.length;
         document.getElementById("stat-today").textContent = tw.length;
-
         const days = [...new Set(all.map((w) => w.date))];
         document.getElementById("stat-days").textContent = days.length;
         document.getElementById("stat-avg").textContent = days.length
           ? (all.length / days.length).toFixed(1)
           : "0";
-
         let streak = 0;
         const d = new Date();
         while (true) {
@@ -1865,29 +2728,19 @@
         }
         document.getElementById("streak-val").textContent =
           streak + (streak === 1 ? " day" : " days");
-
         const cats = {};
         all.forEach((w) => {
           cats[w.cat] = (cats[w.cat] || 0) + 1;
         });
         const sorted = Object.entries(cats).sort((a, b) => b[1] - a[1]);
         const max = sorted[0]?.[1] || 1;
-        const catEl = document.getElementById("cat-progress-list");
-        catEl.innerHTML =
+        document.getElementById("cat-progress-list").innerHTML =
           sorted.length === 0
             ? `<div class="empty-state"><div class="empty-text">No works yet</div></div>`
             : sorted
                 .map(
-                  ([cat, cnt]) => `
-      <div class="cat-progress-item">
-        <div class="cat-progress-row">
-          <span class="cat-progress-name">${cat}</span>
-          <span class="cat-progress-count">${cnt}</span>
-        </div>
-        <div class="progress-bar-wrap">
-          <div class="progress-bar-fill" style="width:${((cnt / max) * 100).toFixed(0)}%"></div>
-        </div>
-      </div>`,
+                  ([cat, cnt]) =>
+                    `<div class="cat-progress-item"><div class="cat-progress-row"><span class="cat-progress-name">${cat}</span><span class="cat-progress-count">${cnt}</span></div><div class="progress-bar-wrap"><div class="progress-bar-fill" style="width:${((cnt / max) * 100).toFixed(0)}%"></div></div></div>`,
                 )
                 .join("");
       }
@@ -1908,22 +2761,101 @@
         el.innerHTML = dates
           .map((date) => {
             const works = byDate[date];
-            const isToday = date === today();
-            return `<div class="history-day">
-      <div class="history-day-label">
-        ${isToday ? "Today" : formatDateShort(date)}
-        <span class="history-day-count">${works.length}</span>
-      </div>
-      ${[...works]
-        .reverse()
-        .map((w) => renderWorkItem(w, false))
-        .join("")}
-    </div>`;
+            return `<div class="history-day"><div class="history-day-label">${date === today() ? "Today" : formatDateShort(date)}<span class="history-day-count">${works.length}</span></div>${[
+              ...works,
+            ]
+              .reverse()
+              .map((w) => renderWorkItem(w, false))
+              .join("")}</div>`;
           })
           .join("");
       }
 
-      // ── TABS ──────────────────────────────────────────────────────────
+      // ─── LEADERBOARD ─────────────────────────────────────────────────
+      function getLbUnlocked() {
+        return myWorks().length >= 3;
+      }
+
+      function updateLbLockState() {
+        const all = myWorks();
+        const count = all.length;
+        const overlay = document.getElementById("lb-locked-overlay");
+        const content = document.getElementById("lb-content");
+
+        if (count >= 3) {
+          overlay.style.display = "none";
+          content.style.display = "block";
+        } else {
+          overlay.style.display = "flex";
+          content.style.display = "none";
+          // Update dots
+          const dots = document.getElementById("lb-dots");
+          dots.innerHTML = [0, 1, 2]
+            .map(
+              (i) => `<div class="lb-dot ${i < count ? "filled" : ""}"></div>`,
+            )
+            .join("");
+          document.getElementById("lb-dots-label").textContent = `${count} / 3`;
+        }
+      }
+
+      function renderLeaderboard() {
+        if (!getLbUnlocked()) {
+          updateLbLockState();
+          return;
+        }
+
+        const ranks = [];
+        Object.keys(appData.works || {}).forEach((username) => {
+          const works = appData.works[username] || [];
+          if (works.length > 0) {
+            ranks.push({ username, count: works.length });
+          }
+        });
+        ranks.sort((a, b) => b.count - a.count);
+        const top5 = ranks.slice(0, 5);
+
+        const medals = ["🥇", "🥈", "🥉", "4", "5"];
+        const rankClasses = ["rank-1", "rank-2", "rank-3", "", ""];
+
+        const list = document.getElementById("lb-list");
+
+        if (top5.length === 0) {
+          list.innerHTML = `<div class="lb-empty"><div class="empty-icon">🌟</div><div class="empty-text">No entries yet</div><div class="empty-sub">Be the first on the board!</div></div>`;
+        } else {
+          list.innerHTML = top5
+            .map((entry, i) => {
+              const isMe = entry.username === currentUser;
+              const medal =
+                i < 3
+                  ? medals[i]
+                  : `<span class="lb-rank-num">#${i + 1}</span>`;
+              return `<div class="lb-item ${rankClasses[i]} ${isMe ? "is-me" : ""}">
+              <div class="lb-rank">${medal}</div>
+              <div class="lb-info">
+                <div class="lb-name">${escHtml(entry.username)} ${isMe ? '<span class="lb-you-tag">YOU</span>' : ""}</div>
+                <div class="lb-works-label">good works recorded</div>
+              </div>
+              <div class="lb-score">
+                <div class="lb-score-val">${entry.count}</div>
+                <div class="lb-score-label">points</div>
+              </div>
+            </div>`;
+            })
+            .join("");
+        }
+
+        // Show my rank if not in top 5
+        const myRankIdx = ranks.findIndex((r) => r.username === currentUser);
+        const myRankSection = document.getElementById("lb-my-rank-section");
+        if (myRankIdx >= 5) {
+          myRankSection.innerHTML = `<div class="lb-my-rank-card"><div style="flex:1"><div class="lb-my-rank-label">Your Rank</div><div class="lb-my-rank-val">#${myRankIdx + 1} of ${ranks.length}</div></div><div style="text-align:right"><div class="lb-my-rank-label">Your Works</div><div class="lb-my-rank-val">${ranks[myRankIdx].count}</div></div></div>`;
+        } else {
+          myRankSection.innerHTML = "";
+        }
+      }
+
+      // ─── TABS ─────────────────────────────────────────────────────────
       function switchTab(name, btn) {
         document
           .querySelectorAll(".tab-content")
@@ -1935,9 +2867,13 @@
         btn.classList.add("active");
         if (name === "progress") renderProgress();
         if (name === "history") renderHistory();
+        if (name === "leaderboard") {
+          updateLbLockState();
+          if (getLbUnlocked()) renderLeaderboard();
+        }
       }
 
-      // ── UTILS ─────────────────────────────────────────────────────────
+      // ─── UTILS ────────────────────────────────────────────────────────
       function escHtml(str) {
         return str
           .replace(/&/g, "&amp;")
@@ -1972,16 +2908,22 @@
         toastTimer = setTimeout(() => t.classList.remove("show"), 2200);
       }
 
-      // ── INIT ──────────────────────────────────────────────────────────
+      // ─── INIT ─────────────────────────────────────────────────────────
       (async () => {
+        // Show splash for a minimum time to look good
+        const splashStart = Date.now();
         await loadData();
+        const elapsed = Date.now() - splashStart;
+        const minSplash = 1800;
+        if (elapsed < minSplash)
+          await new Promise((r) => setTimeout(r, minSplash - elapsed));
+        hideSplash();
+
         const savedUser = localStorage.getItem("gw_user");
-        // Re-validate the saved session against the freshly loaded data
         if (savedUser && appData.users && appData.users[savedUser]) {
           currentUser = savedUser;
           enterApp();
         } else {
-          // Clear stale session if user no longer exists
           if (savedUser) localStorage.removeItem("gw_user");
           initPwaBanner();
         }
@@ -1989,8 +2931,11 @@
 
       document.addEventListener("keydown", (e) => {
         if (e.key === "Enter" && e.target.id === "login-pass") doLogin();
-        if (e.key === "Enter" && e.target.id === "reg-pass") doRegister();
-        if (e.key === "Escape") closePwaModal();
+        if (e.key === "Enter" && e.target.id === "reg-pass2") doRegister();
+        if (e.key === "Escape") {
+          closePwaModal();
+          spamConfirm(false);
+        }
       });
     </script>
   </body>
