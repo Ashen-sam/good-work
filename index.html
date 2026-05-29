@@ -1,1135 +1,1781 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
-<title>Daily Good Works</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
-<style>
-  :root {
-    --blue: #1a56db;
-    --blue-light: #e8f0fe;
-    --blue-mid: #3b71f0;
-    --blue-dark: #0f3a9e;
-    --white: #ffffff;
-    --bg: #f5f7fb;
-    --border: #dde3f0;
-    --text: #1a1f36;
-    --text-muted: #6b7280;
-    --text-light: #9ca3af;
-    --success: #16a34a;
-    --success-bg: #dcfce7;
-    --card: #ffffff;
-    --radius: 10px;
-    --shadow: 0 1px 4px rgba(26,86,219,0.08), 0 2px 12px rgba(26,86,219,0.06);
-  }
-
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-
-  body {
-    font-family: 'DM Sans', sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    font-size: 13px;
-    min-height: 100vh;
-  }
-
-  /* ── AUTH SCREEN ── */
-  #auth-screen {
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-    background: var(--white);
-  }
-
-  .auth-card {
-    width: 100%;
-    max-width: 340px;
-    background: var(--white);
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    padding: 36px 28px;
-    box-shadow: var(--shadow);
-  }
-
-  .auth-logo {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 28px;
-  }
-
-  .auth-logo-icon {
-    width: 36px;
-    height: 36px;
-    background: var(--blue);
-    border-radius: 9px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    font-size: 17px;
-  }
-
-  .auth-logo-text {
-    font-size: 15px;
-    font-weight: 700;
-    color: var(--text);
-    letter-spacing: -0.3px;
-  }
-
-  .auth-logo-sub {
-    font-size: 10px;
-    color: var(--text-muted);
-    font-weight: 400;
-    letter-spacing: 0.3px;
-    text-transform: uppercase;
-  }
-
-  .auth-title {
-    font-size: 18px;
-    font-weight: 700;
-    color: var(--text);
-    margin-bottom: 4px;
-    letter-spacing: -0.3px;
-  }
-
-  .auth-sub {
-    font-size: 12px;
-    color: var(--text-muted);
-    margin-bottom: 24px;
-  }
-
-  .form-group { margin-bottom: 14px; }
-
-  .form-label {
-    display: block;
-    font-size: 11px;
-    font-weight: 600;
-    color: var(--text-muted);
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    margin-bottom: 6px;
-  }
-
-  .form-input {
-    width: 100%;
-    padding: 10px 12px;
-    border: 1.5px solid var(--border);
-    border-radius: var(--radius);
-    font-family: 'DM Sans', sans-serif;
-    font-size: 13px;
-    color: var(--text);
-    background: var(--white);
-    outline: none;
-    transition: border-color 0.15s;
-  }
-
-  .form-input:focus { border-color: var(--blue); }
-
-  .btn {
-    width: 100%;
-    padding: 11px 16px;
-    border: none;
-    border-radius: var(--radius);
-    font-family: 'DM Sans', sans-serif;
-    font-size: 13px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: opacity 0.15s, transform 0.1s;
-  }
-
-  .btn:active { transform: scale(0.98); }
-
-  .btn-primary {
-    background: var(--blue);
-    color: white;
-  }
-
-  .btn-primary:hover { opacity: 0.9; }
-
-  .btn-outline {
-    background: transparent;
-    color: var(--blue);
-    border: 1.5px solid var(--blue);
-    margin-top: 8px;
-  }
-
-  .auth-toggle {
-    text-align: center;
-    margin-top: 16px;
-    font-size: 12px;
-    color: var(--text-muted);
-  }
-
-  .auth-toggle span {
-    color: var(--blue);
-    cursor: pointer;
-    font-weight: 600;
-  }
-
-  .auth-error {
-    background: #fee2e2;
-    color: #b91c1c;
-    border-radius: 8px;
-    padding: 9px 12px;
-    font-size: 12px;
-    margin-bottom: 14px;
-    display: none;
-  }
-
-  /* ── APP SHELL ── */
-  #app-screen { display: none; min-height: 100vh; flex-direction: column; }
-
-  .top-bar {
-    background: var(--white);
-    border-bottom: 1px solid var(--border);
-    padding: 12px 16px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    position: sticky;
-    top: 0;
-    z-index: 100;
-  }
-
-  .top-bar-left {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-
-  .top-bar-icon {
-    width: 28px;
-    height: 28px;
-    background: var(--blue);
-    border-radius: 7px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    font-size: 13px;
-  }
-
-  .top-bar-title {
-    font-size: 14px;
-    font-weight: 700;
-    letter-spacing: -0.2px;
-  }
-
-  .top-bar-user {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-
-  .user-badge {
-    font-size: 11px;
-    color: var(--text-muted);
-    font-weight: 500;
-  }
-
-  .logout-btn {
-    background: none;
-    border: 1px solid var(--border);
-    border-radius: 7px;
-    padding: 5px 10px;
-    font-size: 11px;
-    font-family: 'DM Sans', sans-serif;
-    color: var(--text-muted);
-    cursor: pointer;
-    font-weight: 500;
-  }
-
-  .logout-btn:hover { border-color: var(--blue); color: var(--blue); }
-
-  /* ── TABS ── */
-  .tabs-bar {
-    background: var(--white);
-    border-bottom: 1px solid var(--border);
-    display: flex;
-    padding: 0 16px;
-    gap: 0;
-  }
-
-  .tab-btn {
-    padding: 11px 14px;
-    font-size: 12px;
-    font-weight: 600;
-    font-family: 'DM Sans', sans-serif;
-    background: none;
-    border: none;
-    border-bottom: 2px solid transparent;
-    color: var(--text-muted);
-    cursor: pointer;
-    transition: color 0.15s, border-color 0.15s;
-    white-space: nowrap;
-  }
-
-  .tab-btn.active {
-    color: var(--blue);
-    border-bottom-color: var(--blue);
-  }
-
-  /* ── TAB CONTENT ── */
-  .tab-content { display: none; padding: 16px; flex: 1; }
-  .tab-content.active { display: block; }
-
-  /* ── TODAY TAB ── */
-  .date-header {
-    font-size: 11px;
-    color: var(--text-muted);
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    margin-bottom: 14px;
-  }
-
-  .add-card {
-    background: var(--white);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 16px;
-    margin-bottom: 16px;
-    box-shadow: var(--shadow);
-  }
-
-  .add-card-title {
-    font-size: 12px;
-    font-weight: 700;
-    color: var(--text);
-    margin-bottom: 12px;
-    text-transform: uppercase;
-    letter-spacing: 0.4px;
-  }
-
-  .form-textarea {
-    width: 100%;
-    padding: 10px 12px;
-    border: 1.5px solid var(--border);
-    border-radius: var(--radius);
-    font-family: 'DM Sans', sans-serif;
-    font-size: 13px;
-    color: var(--text);
-    resize: none;
-    height: 72px;
-    outline: none;
-    transition: border-color 0.15s;
-    background: var(--white);
-  }
-
-  .form-textarea:focus { border-color: var(--blue); }
-
-  .category-row {
-    display: flex;
-    gap: 6px;
-    flex-wrap: wrap;
-    margin: 10px 0;
-  }
-
-  .cat-chip {
-    padding: 5px 10px;
-    border-radius: 20px;
-    font-size: 11px;
-    font-weight: 600;
-    background: var(--bg);
-    border: 1.5px solid var(--border);
-    color: var(--text-muted);
-    cursor: pointer;
-    transition: all 0.15s;
-  }
-
-  .cat-chip.selected {
-    background: var(--blue-light);
-    border-color: var(--blue);
-    color: var(--blue);
-  }
-
-  .add-row {
-    display: flex;
-    gap: 8px;
-    margin-top: 10px;
-    align-items: center;
-  }
-
-  .btn-sm {
-    padding: 8px 14px;
-    border: none;
-    border-radius: 8px;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 12px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: opacity 0.15s, transform 0.1s;
-    white-space: nowrap;
-  }
-
-  .btn-sm:active { transform: scale(0.97); }
-  .btn-sm.primary { background: var(--blue); color: white; }
-  .btn-sm.primary:hover { opacity: 0.9; }
-
-  .works-list { display: flex; flex-direction: column; gap: 8px; }
-
-  .work-item {
-    background: var(--white);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 12px 14px;
-    display: flex;
-    align-items: flex-start;
-    gap: 10px;
-    box-shadow: var(--shadow);
-    animation: fadeIn 0.2s ease;
-  }
-
-  @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(4px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-
-  .work-check {
-    width: 18px;
-    height: 18px;
-    border-radius: 50%;
-    background: var(--success-bg);
-    border: 1.5px solid var(--success);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    margin-top: 1px;
-    font-size: 10px;
-    color: var(--success);
-  }
-
-  .work-body { flex: 1; }
-
-  .work-text {
-    font-size: 13px;
-    color: var(--text);
-    font-weight: 500;
-    line-height: 1.4;
-    margin-bottom: 4px;
-  }
-
-  .work-meta {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-
-  .work-cat {
-    font-size: 10px;
-    font-weight: 600;
-    padding: 2px 7px;
-    border-radius: 10px;
-    background: var(--blue-light);
-    color: var(--blue);
-    text-transform: uppercase;
-    letter-spacing: 0.3px;
-  }
-
-  .work-time {
-    font-size: 10px;
-    color: var(--text-light);
-    font-family: 'DM Mono', monospace;
-  }
-
-  .work-del {
-    background: none;
-    border: none;
-    color: var(--text-light);
-    font-size: 14px;
-    cursor: pointer;
-    padding: 2px 4px;
-    border-radius: 4px;
-    line-height: 1;
-  }
-
-  .work-del:hover { color: #dc2626; background: #fee2e2; }
-
-  .empty-state {
-    text-align: center;
-    padding: 32px 16px;
-    color: var(--text-muted);
-  }
-
-  .empty-icon { font-size: 28px; margin-bottom: 8px; }
-  .empty-text { font-size: 13px; font-weight: 500; color: var(--text-muted); }
-  .empty-sub { font-size: 11px; color: var(--text-light); margin-top: 4px; }
-
-  /* ── PROGRESS TAB ── */
-  .stats-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-    margin-bottom: 16px;
-  }
-
-  .stat-card {
-    background: var(--white);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 14px;
-    box-shadow: var(--shadow);
-  }
-
-  .stat-value {
-    font-size: 24px;
-    font-weight: 700;
-    color: var(--blue);
-    letter-spacing: -1px;
-    line-height: 1;
-    margin-bottom: 4px;
-    font-family: 'DM Mono', monospace;
-  }
-
-  .stat-label {
-    font-size: 10px;
-    font-weight: 600;
-    color: var(--text-muted);
-    text-transform: uppercase;
-    letter-spacing: 0.4px;
-  }
-
-  .section-title {
-    font-size: 11px;
-    font-weight: 700;
-    color: var(--text-muted);
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    margin-bottom: 10px;
-  }
-
-  .streak-card {
-    background: var(--blue);
-    border-radius: var(--radius);
-    padding: 14px 16px;
-    color: white;
-    margin-bottom: 16px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-
-  .streak-icon { font-size: 24px; }
-
-  .streak-label {
-    font-size: 10px;
-    font-weight: 600;
-    opacity: 0.8;
-    text-transform: uppercase;
-    letter-spacing: 0.4px;
-  }
-
-  .streak-value {
-    font-size: 20px;
-    font-weight: 700;
-    letter-spacing: -0.5px;
-    font-family: 'DM Mono', monospace;
-  }
-
-  .progress-bar-wrap {
-    background: var(--border);
-    border-radius: 20px;
-    height: 6px;
-    overflow: hidden;
-    margin-top: 6px;
-  }
-
-  .progress-bar-fill {
-    height: 100%;
-    background: var(--blue);
-    border-radius: 20px;
-    transition: width 0.6s ease;
-  }
-
-  .cat-progress-item {
-    background: var(--white);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 12px 14px;
-    margin-bottom: 8px;
-    box-shadow: var(--shadow);
-  }
-
-  .cat-progress-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 6px;
-  }
-
-  .cat-progress-name {
-    font-size: 12px;
-    font-weight: 600;
-    color: var(--text);
-  }
-
-  .cat-progress-count {
-    font-size: 11px;
-    font-family: 'DM Mono', monospace;
-    color: var(--blue);
-    font-weight: 600;
-  }
-
-  /* ── HISTORY TAB ── */
-  .history-day {
-    margin-bottom: 16px;
-  }
-
-  .history-day-label {
-    font-size: 11px;
-    font-weight: 700;
-    color: var(--text-muted);
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    margin-bottom: 8px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-
-  .history-day-count {
-    background: var(--blue-light);
-    color: var(--blue);
-    border-radius: 10px;
-    padding: 1px 7px;
-    font-size: 10px;
-    font-weight: 700;
-  }
-
-  /* ── LOADING ── */
-  .loading-overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(255,255,255,0.85);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 999;
-    display: none;
-  }
-
-  .spinner {
-    width: 24px;
-    height: 24px;
-    border: 3px solid var(--border);
-    border-top-color: var(--blue);
-    border-radius: 50%;
-    animation: spin 0.7s linear infinite;
-  }
-
-  @keyframes spin { to { transform: rotate(360deg); } }
-
-  .toast {
-    position: fixed;
-    bottom: 24px;
-    left: 50%;
-    transform: translateX(-50%) translateY(60px);
-    background: var(--text);
-    color: white;
-    padding: 9px 18px;
-    border-radius: 20px;
-    font-size: 12px;
-    font-weight: 600;
-    z-index: 999;
-    transition: transform 0.25s ease;
-    white-space: nowrap;
-  }
-
-  .toast.show { transform: translateX(-50%) translateY(0); }
-
-  /* ── WELCOME MODAL ── */
-  .modal-backdrop {
-    position: fixed;
-    inset: 0;
-    background: rgba(15, 23, 60, 0.45);
-    z-index: 500;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-    pointer-events: none;
-  }
-
-  .modal-backdrop.visible {
-    opacity: 1;
-    pointer-events: all;
-  }
-
-  .welcome-modal {
-    background: var(--white);
-    border-radius: 18px;
-    max-width: 320px;
-    width: 100%;
-    padding: 32px 24px 24px;
-    box-shadow: 0 8px 40px rgba(26,86,219,0.18), 0 2px 8px rgba(0,0,0,0.08);
-    transform: translateY(20px) scale(0.97);
-    transition: transform 0.3s ease;
-    text-align: center;
-  }
-
-  .modal-backdrop.visible .welcome-modal {
-    transform: translateY(0) scale(1);
-  }
-
-  .welcome-emoji {
-    font-size: 40px;
-    margin-bottom: 12px;
-    display: block;
-    animation: bob 1.8s ease-in-out infinite;
-  }
-
-  @keyframes bob {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-5px); }
-  }
-
-  .welcome-hi {
-    font-size: 11px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    color: var(--blue);
-    margin-bottom: 6px;
-  }
-
-  .welcome-name {
-    font-size: 22px;
-    font-weight: 700;
-    color: var(--text);
-    letter-spacing: -0.5px;
-    margin-bottom: 16px;
-  }
-
-  .welcome-divider {
-    width: 32px;
-    height: 2px;
-    background: var(--blue-light);
-    border-radius: 2px;
-    margin: 0 auto 16px;
-  }
-
-  .welcome-msg {
-    font-size: 13px;
-    color: var(--text-muted);
-    line-height: 1.65;
-    margin-bottom: 20px;
-  }
-
-  .welcome-msg strong {
-    color: var(--text);
-    font-weight: 600;
-  }
-
-  .welcome-pillars {
-    display: flex;
-    justify-content: center;
-    gap: 8px;
-    flex-wrap: wrap;
-    margin-bottom: 22px;
-  }
-
-  .welcome-pill {
-    background: var(--blue-light);
-    color: var(--blue);
-    border-radius: 20px;
-    padding: 4px 11px;
-    font-size: 11px;
-    font-weight: 600;
-    letter-spacing: 0.2px;
-  }
-
-  .welcome-btn {
-    width: 100%;
-    padding: 12px;
-    background: var(--blue);
-    color: white;
-    border: none;
-    border-radius: 10px;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 13px;
-    font-weight: 700;
-    cursor: pointer;
-    letter-spacing: 0.1px;
-    transition: opacity 0.15s, transform 0.1s;
-  }
-
-  .welcome-btn:hover { opacity: 0.9; }
-  .welcome-btn:active { transform: scale(0.98); }
-
-  .welcome-footer {
-    font-size: 10px;
-    color: var(--text-light);
-    margin-top: 12px;
-  }
-
-  /* ── RESPONSIVE ── */
-  @media (min-width: 480px) {
-    .auth-card { padding: 40px 36px; }
-    .tab-content { padding: 20px; }
-    .stats-grid { grid-template-columns: repeat(4, 1fr); }
-  }
-
-  @media (max-width: 340px) {
-    .tab-btn { padding: 10px 10px; font-size: 11px; }
-  }
-</style>
-</head>
-<body>
-
-<!-- WELCOME MODAL -->
-<div class="modal-backdrop" id="welcome-modal">
-  <div class="welcome-modal">
-    <span class="welcome-emoji">🌟</span>
-    <div class="welcome-hi">Welcome aboard</div>
-    <div class="welcome-name" id="welcome-username"></div>
-    <div class="welcome-divider"></div>
-    <div class="welcome-msg">
-      This is your space to <strong>focus on the good</strong>.<br><br>
-      Every small act of kindness, every prayer, every moment of service — it all matters.
-      Here you can <strong>record, reflect, and grow</strong> by seeing the positive impact you make each day.
-    </div>
-    <div class="welcome-pillars">
-      <span class="welcome-pill">✦ Kindness</span>
-      <span class="welcome-pill">🤲 Service</span>
-      <span class="welcome-pill">📖 Growth</span>
-      <span class="welcome-pill">💛 Gratitude</span>
-    </div>
-    <button class="welcome-btn" onclick="closeWelcome()">Start My Journey →</button>
-    <div class="welcome-footer">Your good works are recorded, never forgotten.</div>
-  </div>
-</div>
-
-
-<div class="loading-overlay" id="loading"><div class="spinner"></div></div>
-<div class="toast" id="toast"></div>
-
-<!-- AUTH -->
-<div id="auth-screen">
-  <div class="auth-card">
-    <div class="auth-logo">
-      <div class="auth-logo-icon">✦</div>
-      <div>
-        <div class="auth-logo-text">Good Works</div>
-        <div class="auth-logo-sub">Daily Tracker</div>
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0"
+    />
+    <title>Daily Good Works</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --blue: #1a56db;
+        --blue-light: #e8f0fe;
+        --blue-mid: #3b71f0;
+        --blue-dark: #0f3a9e;
+        --white: #ffffff;
+        --bg: #f5f7fb;
+        --border: #dde3f0;
+        --text: #1a1f36;
+        --text-muted: #6b7280;
+        --text-light: #9ca3af;
+        --success: #16a34a;
+        --success-bg: #dcfce7;
+        --card: #ffffff;
+        --radius: 10px;
+        --shadow:
+          0 1px 4px rgba(26, 86, 219, 0.08), 0 2px 12px rgba(26, 86, 219, 0.06);
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        font-family: "DM Sans", sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        font-size: 13px;
+        min-height: 100vh;
+      }
+
+      /* ── PWA INSTALL BANNER ── */
+      #pwa-banner {
+        display: none;
+        background: linear-gradient(135deg, #1a56db 0%, #3b71f0 100%);
+        color: white;
+        padding: 10px 14px;
+        align-items: center;
+        gap: 10px;
+        position: relative;
+      }
+      #pwa-banner.show {
+        display: flex;
+      }
+      .pwa-banner-icon {
+        font-size: 20px;
+        flex-shrink: 0;
+      }
+      .pwa-banner-body {
+        flex: 1;
+        min-width: 0;
+      }
+      .pwa-banner-title {
+        font-size: 12px;
+        font-weight: 700;
+        margin-bottom: 1px;
+      }
+      .pwa-banner-sub {
+        font-size: 11px;
+        opacity: 0.85;
+        line-height: 1.4;
+      }
+      .pwa-banner-btns {
+        display: flex;
+        gap: 6px;
+        align-items: center;
+        flex-shrink: 0;
+      }
+      .pwa-install-btn {
+        background: white;
+        color: var(--blue);
+        border: none;
+        border-radius: 7px;
+        padding: 6px 11px;
+        font-size: 11px;
+        font-weight: 700;
+        font-family: "DM Sans", sans-serif;
+        cursor: pointer;
+        white-space: nowrap;
+      }
+      .pwa-close-btn {
+        background: rgba(255, 255, 255, 0.2);
+        border: none;
+        color: white;
+        width: 22px;
+        height: 22px;
+        border-radius: 50%;
+        font-size: 13px;
+        line-height: 1;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: "DM Sans", sans-serif;
+        flex-shrink: 0;
+      }
+
+      /* ── AUTH SCREEN ── */
+      #auth-screen {
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        background: var(--white);
+      }
+      .auth-card {
+        width: 100%;
+        max-width: 340px;
+        background: var(--white);
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        padding: 36px 28px;
+        box-shadow: var(--shadow);
+      }
+      .auth-logo {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .auth-logo-icon {
+        width: 36px;
+        height: 36px;
+        background: var(--blue);
+        border-radius: 9px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 17px;
+      }
+      .auth-logo-text {
+        font-size: 15px;
+        font-weight: 700;
+        color: var(--text);
+        letter-spacing: -0.3px;
+      }
+      .auth-logo-sub {
+        font-size: 10px;
+        color: var(--text-muted);
+        font-weight: 400;
+        letter-spacing: 0.3px;
+        text-transform: uppercase;
+      }
+      .auth-logo-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 28px;
+      }
+      .help-btn {
+        width: 26px;
+        height: 26px;
+        border-radius: 50%;
+        background: var(--blue-light);
+        border: 1.5px solid var(--blue);
+        color: var(--blue);
+        font-size: 12px;
+        font-weight: 700;
+        font-family: "DM Sans", sans-serif;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        transition: background 0.15s;
+      }
+      .help-btn:hover {
+        background: var(--blue);
+        color: white;
+      }
+      .auth-title {
+        font-size: 18px;
+        font-weight: 700;
+        color: var(--text);
+        margin-bottom: 4px;
+        letter-spacing: -0.3px;
+      }
+      .auth-sub {
+        font-size: 12px;
+        color: var(--text-muted);
+        margin-bottom: 24px;
+      }
+      .form-group {
+        margin-bottom: 14px;
+      }
+      .form-label {
+        display: block;
+        font-size: 11px;
+        font-weight: 600;
+        color: var(--text-muted);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 6px;
+      }
+      .form-input {
+        width: 100%;
+        padding: 10px 12px;
+        border: 1.5px solid var(--border);
+        border-radius: var(--radius);
+        font-family: "DM Sans", sans-serif;
+        font-size: 13px;
+        color: var(--text);
+        background: var(--white);
+        outline: none;
+        transition: border-color 0.15s;
+      }
+      .form-input:focus {
+        border-color: var(--blue);
+      }
+      .btn {
+        width: 100%;
+        padding: 11px 16px;
+        border: none;
+        border-radius: var(--radius);
+        font-family: "DM Sans", sans-serif;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        transition:
+          opacity 0.15s,
+          transform 0.1s;
+      }
+      .btn:active {
+        transform: scale(0.98);
+      }
+      .btn-primary {
+        background: var(--blue);
+        color: white;
+      }
+      .btn-primary:hover {
+        opacity: 0.9;
+      }
+      .auth-toggle {
+        text-align: center;
+        margin-top: 16px;
+        font-size: 12px;
+        color: var(--text-muted);
+      }
+      .auth-toggle span {
+        color: var(--blue);
+        cursor: pointer;
+        font-weight: 600;
+      }
+      .auth-error {
+        background: #fee2e2;
+        color: #b91c1c;
+        border-radius: 8px;
+        padding: 9px 12px;
+        font-size: 12px;
+        margin-bottom: 14px;
+        display: none;
+      }
+
+      /* ── CONFIG NOTICE (shown when BIN_ID not set) ── */
+      .config-notice {
+        background: #fef3c7;
+        border: 1.5px solid #f59e0b;
+        border-radius: 10px;
+        padding: 12px 14px;
+        font-size: 11px;
+        color: #92400e;
+        margin-bottom: 16px;
+        line-height: 1.6;
+        display: none;
+      }
+      .config-notice strong {
+        font-weight: 700;
+        display: block;
+        margin-bottom: 4px;
+      }
+      .config-notice code {
+        background: rgba(0, 0, 0, 0.08);
+        border-radius: 4px;
+        padding: 1px 5px;
+        font-family: "DM Mono", monospace;
+        font-size: 10px;
+      }
+
+      /* ── PWA HELP MODAL ── */
+      .pwa-modal-backdrop {
+        position: fixed;
+        inset: 0;
+        background: rgba(15, 23, 60, 0.5);
+        z-index: 600;
+        display: flex;
+        align-items: flex-end;
+        justify-content: center;
+        padding: 0;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.25s ease;
+      }
+      .pwa-modal-backdrop.visible {
+        opacity: 1;
+        pointer-events: all;
+      }
+      .pwa-modal {
+        background: var(--white);
+        border-radius: 20px 20px 0 0;
+        width: 100%;
+        max-width: 480px;
+        padding: 24px 20px 32px;
+        box-shadow: 0 -4px 32px rgba(26, 86, 219, 0.15);
+        transform: translateY(100%);
+        transition: transform 0.3s ease;
+        max-height: 90vh;
+        overflow-y: auto;
+      }
+      .pwa-modal-backdrop.visible .pwa-modal {
+        transform: translateY(0);
+      }
+      .pwa-modal-handle {
+        width: 36px;
+        height: 4px;
+        background: var(--border);
+        border-radius: 4px;
+        margin: 0 auto 20px;
+      }
+      .pwa-modal-header {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 18px;
+      }
+      .pwa-modal-header-icon {
+        width: 38px;
+        height: 38px;
+        background: var(--blue);
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 18px;
+        flex-shrink: 0;
+      }
+      .pwa-modal-title {
+        font-size: 16px;
+        font-weight: 700;
+        color: var(--text);
+        letter-spacing: -0.3px;
+      }
+      .pwa-modal-subtitle {
+        font-size: 11px;
+        color: var(--text-muted);
+        margin-top: 2px;
+      }
+      .pwa-close-x {
+        margin-left: auto;
+        background: var(--bg);
+        border: none;
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        font-size: 14px;
+        color: var(--text-muted);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: "DM Sans", sans-serif;
+        flex-shrink: 0;
+      }
+      .os-tabs {
+        display: flex;
+        gap: 6px;
+        margin-bottom: 18px;
+        background: var(--bg);
+        padding: 4px;
+        border-radius: 10px;
+      }
+      .os-tab {
+        flex: 1;
+        padding: 8px 6px;
+        border: none;
+        border-radius: 7px;
+        background: transparent;
+        font-family: "DM Sans", sans-serif;
+        font-size: 11px;
+        font-weight: 600;
+        color: var(--text-muted);
+        cursor: pointer;
+        transition: all 0.15s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 5px;
+      }
+      .os-tab.active {
+        background: var(--white);
+        color: var(--blue);
+        box-shadow: 0 1px 4px rgba(26, 86, 219, 0.12);
+      }
+      .os-tab-icon {
+        font-size: 14px;
+      }
+      .install-steps {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+      .install-step {
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        background: var(--bg);
+        border-radius: var(--radius);
+        padding: 12px;
+      }
+      .step-num {
+        width: 24px;
+        height: 24px;
+        background: var(--blue);
+        color: white;
+        border-radius: 50%;
+        font-size: 11px;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        margin-top: 1px;
+      }
+      .step-body {
+        flex: 1;
+      }
+      .step-title {
+        font-size: 12px;
+        font-weight: 700;
+        color: var(--text);
+        margin-bottom: 3px;
+      }
+      .step-desc {
+        font-size: 11px;
+        color: var(--text-muted);
+        line-height: 1.5;
+      }
+      .step-icon-inline {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background: var(--blue-light);
+        color: var(--blue);
+        border-radius: 5px;
+        padding: 1px 6px;
+        font-size: 13px;
+        vertical-align: middle;
+        margin: 0 2px;
+      }
+      .step-tag {
+        display: inline-block;
+        background: var(--blue-light);
+        color: var(--blue);
+        border-radius: 5px;
+        padding: 1px 7px;
+        font-size: 10px;
+        font-weight: 700;
+        vertical-align: middle;
+      }
+      .pwa-modal-tip {
+        margin-top: 18px;
+        background: var(--success-bg);
+        border-radius: var(--radius);
+        padding: 10px 12px;
+        font-size: 11px;
+        color: var(--success);
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 7px;
+      }
+
+      /* ── APP SHELL ── */
+      #app-screen {
+        display: none;
+        min-height: 100vh;
+        flex-direction: column;
+      }
+      .top-bar {
+        background: var(--white);
+        border-bottom: 1px solid var(--border);
+        padding: 12px 16px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+      }
+      .top-bar-left {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .top-bar-icon {
+        width: 28px;
+        height: 28px;
+        background: var(--blue);
+        border-radius: 7px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 13px;
+      }
+      .top-bar-title {
+        font-size: 14px;
+        font-weight: 700;
+        letter-spacing: -0.2px;
+      }
+      .top-bar-user {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .user-badge {
+        font-size: 11px;
+        color: var(--text-muted);
+        font-weight: 500;
+      }
+      .logout-btn {
+        background: none;
+        border: 1px solid var(--border);
+        border-radius: 7px;
+        padding: 5px 10px;
+        font-size: 11px;
+        font-family: "DM Sans", sans-serif;
+        color: var(--text-muted);
+        cursor: pointer;
+        font-weight: 500;
+      }
+      .logout-btn:hover {
+        border-color: var(--blue);
+        color: var(--blue);
+      }
+
+      /* ── TABS ── */
+      .tabs-bar {
+        background: var(--white);
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        padding: 0 16px;
+        gap: 0;
+      }
+      .tab-btn {
+        padding: 11px 14px;
+        font-size: 12px;
+        font-weight: 600;
+        font-family: "DM Sans", sans-serif;
+        background: none;
+        border: none;
+        border-bottom: 2px solid transparent;
+        color: var(--text-muted);
+        cursor: pointer;
+        transition:
+          color 0.15s,
+          border-color 0.15s;
+        white-space: nowrap;
+      }
+      .tab-btn.active {
+        color: var(--blue);
+        border-bottom-color: var(--blue);
+      }
+
+      /* ── TAB CONTENT ── */
+      .tab-content {
+        display: none;
+        padding: 16px;
+        flex: 1;
+      }
+      .tab-content.active {
+        display: block;
+      }
+
+      /* ── TODAY TAB ── */
+      .date-header {
+        font-size: 11px;
+        color: var(--text-muted);
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 14px;
+      }
+      .add-card {
+        background: var(--white);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 16px;
+        margin-bottom: 16px;
+        box-shadow: var(--shadow);
+      }
+      .add-card-title {
+        font-size: 12px;
+        font-weight: 700;
+        color: var(--text);
+        margin-bottom: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.4px;
+      }
+      .form-textarea {
+        width: 100%;
+        padding: 10px 12px;
+        border: 1.5px solid var(--border);
+        border-radius: var(--radius);
+        font-family: "DM Sans", sans-serif;
+        font-size: 13px;
+        color: var(--text);
+        resize: none;
+        height: 72px;
+        outline: none;
+        transition: border-color 0.15s;
+        background: var(--white);
+      }
+      .form-textarea:focus {
+        border-color: var(--blue);
+      }
+      .category-row {
+        display: flex;
+        gap: 6px;
+        flex-wrap: wrap;
+        margin: 10px 0;
+      }
+      .cat-chip {
+        padding: 5px 10px;
+        border-radius: 20px;
+        font-size: 11px;
+        font-weight: 600;
+        background: var(--bg);
+        border: 1.5px solid var(--border);
+        color: var(--text-muted);
+        cursor: pointer;
+        transition: all 0.15s;
+      }
+      .cat-chip.selected {
+        background: var(--blue-light);
+        border-color: var(--blue);
+        color: var(--blue);
+      }
+      .add-row {
+        display: flex;
+        gap: 8px;
+        margin-top: 10px;
+        align-items: center;
+      }
+      .btn-sm {
+        padding: 8px 14px;
+        border: none;
+        border-radius: 8px;
+        font-family: "DM Sans", sans-serif;
+        font-size: 12px;
+        font-weight: 600;
+        cursor: pointer;
+        transition:
+          opacity 0.15s,
+          transform 0.1s;
+        white-space: nowrap;
+      }
+      .btn-sm:active {
+        transform: scale(0.97);
+      }
+      .btn-sm.primary {
+        background: var(--blue);
+        color: white;
+      }
+      .btn-sm.primary:hover {
+        opacity: 0.9;
+      }
+      .works-list {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+      .work-item {
+        background: var(--white);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 12px 14px;
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+        box-shadow: var(--shadow);
+        animation: fadeIn 0.2s ease;
+      }
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(4px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      .work-check {
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        background: var(--success-bg);
+        border: 1.5px solid var(--success);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        margin-top: 1px;
+        font-size: 10px;
+        color: var(--success);
+      }
+      .work-body {
+        flex: 1;
+      }
+      .work-text {
+        font-size: 13px;
+        color: var(--text);
+        font-weight: 500;
+        line-height: 1.4;
+        margin-bottom: 4px;
+      }
+      .work-meta {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .work-cat {
+        font-size: 10px;
+        font-weight: 600;
+        padding: 2px 7px;
+        border-radius: 10px;
+        background: var(--blue-light);
+        color: var(--blue);
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+      }
+      .work-time {
+        font-size: 10px;
+        color: var(--text-light);
+        font-family: "DM Mono", monospace;
+      }
+      .work-del {
+        background: none;
+        border: none;
+        color: var(--text-light);
+        font-size: 14px;
+        cursor: pointer;
+        padding: 2px 4px;
+        border-radius: 4px;
+        line-height: 1;
+      }
+      .work-del:hover {
+        color: #dc2626;
+        background: #fee2e2;
+      }
+      .empty-state {
+        text-align: center;
+        padding: 32px 16px;
+        color: var(--text-muted);
+      }
+      .empty-icon {
+        font-size: 28px;
+        margin-bottom: 8px;
+      }
+      .empty-text {
+        font-size: 13px;
+        font-weight: 500;
+        color: var(--text-muted);
+      }
+      .empty-sub {
+        font-size: 11px;
+        color: var(--text-light);
+        margin-top: 4px;
+      }
+
+      /* ── PROGRESS TAB ── */
+      .stats-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+        margin-bottom: 16px;
+      }
+      .stat-card {
+        background: var(--white);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 14px;
+        box-shadow: var(--shadow);
+      }
+      .stat-value {
+        font-size: 24px;
+        font-weight: 700;
+        color: var(--blue);
+        letter-spacing: -1px;
+        line-height: 1;
+        margin-bottom: 4px;
+        font-family: "DM Mono", monospace;
+      }
+      .stat-label {
+        font-size: 10px;
+        font-weight: 600;
+        color: var(--text-muted);
+        text-transform: uppercase;
+        letter-spacing: 0.4px;
+      }
+      .section-title {
+        font-size: 11px;
+        font-weight: 700;
+        color: var(--text-muted);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 10px;
+      }
+      .streak-card {
+        background: var(--blue);
+        border-radius: var(--radius);
+        padding: 14px 16px;
+        color: white;
+        margin-bottom: 16px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+      .streak-icon {
+        font-size: 24px;
+      }
+      .streak-label {
+        font-size: 10px;
+        font-weight: 600;
+        opacity: 0.8;
+        text-transform: uppercase;
+        letter-spacing: 0.4px;
+      }
+      .streak-value {
+        font-size: 20px;
+        font-weight: 700;
+        letter-spacing: -0.5px;
+        font-family: "DM Mono", monospace;
+      }
+      .progress-bar-wrap {
+        background: var(--border);
+        border-radius: 20px;
+        height: 6px;
+        overflow: hidden;
+        margin-top: 6px;
+      }
+      .progress-bar-fill {
+        height: 100%;
+        background: var(--blue);
+        border-radius: 20px;
+        transition: width 0.6s ease;
+      }
+      .cat-progress-item {
+        background: var(--white);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 12px 14px;
+        margin-bottom: 8px;
+        box-shadow: var(--shadow);
+      }
+      .cat-progress-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 6px;
+      }
+      .cat-progress-name {
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--text);
+      }
+      .cat-progress-count {
+        font-size: 11px;
+        font-family: "DM Mono", monospace;
+        color: var(--blue);
+        font-weight: 600;
+      }
+
+      /* ── HISTORY TAB ── */
+      .history-day {
+        margin-bottom: 16px;
+      }
+      .history-day-label {
+        font-size: 11px;
+        font-weight: 700;
+        color: var(--text-muted);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 8px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .history-day-count {
+        background: var(--blue-light);
+        color: var(--blue);
+        border-radius: 10px;
+        padding: 1px 7px;
+        font-size: 10px;
+        font-weight: 700;
+      }
+
+      /* ── LOADING ── */
+      .loading-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(255, 255, 255, 0.85);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 999;
+        display: none;
+      }
+      .spinner {
+        width: 24px;
+        height: 24px;
+        border: 3px solid var(--border);
+        border-top-color: var(--blue);
+        border-radius: 50%;
+        animation: spin 0.7s linear infinite;
+      }
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+      .toast {
+        position: fixed;
+        bottom: 24px;
+        left: 50%;
+        transform: translateX(-50%) translateY(60px);
+        background: var(--text);
+        color: white;
+        padding: 9px 18px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+        z-index: 999;
+        transition: transform 0.25s ease;
+        white-space: nowrap;
+      }
+      .toast.show {
+        transform: translateX(-50%) translateY(0);
+      }
+
+      /* ── WELCOME MODAL ── */
+      .modal-backdrop {
+        position: fixed;
+        inset: 0;
+        background: rgba(15, 23, 60, 0.45);
+        z-index: 500;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        pointer-events: none;
+      }
+      .modal-backdrop.visible {
+        opacity: 1;
+        pointer-events: all;
+      }
+      .welcome-modal {
+        background: var(--white);
+        border-radius: 18px;
+        max-width: 320px;
+        width: 100%;
+        padding: 32px 24px 24px;
+        box-shadow:
+          0 8px 40px rgba(26, 86, 219, 0.18),
+          0 2px 8px rgba(0, 0, 0, 0.08);
+        transform: translateY(20px) scale(0.97);
+        transition: transform 0.3s ease;
+        text-align: center;
+      }
+      .modal-backdrop.visible .welcome-modal {
+        transform: translateY(0) scale(1);
+      }
+      .welcome-emoji {
+        font-size: 40px;
+        margin-bottom: 12px;
+        display: block;
+        animation: bob 1.8s ease-in-out infinite;
+      }
+      @keyframes bob {
+        0%,
+        100% {
+          transform: translateY(0);
+        }
+        50% {
+          transform: translateY(-5px);
+        }
+      }
+      .welcome-hi {
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: var(--blue);
+        margin-bottom: 6px;
+      }
+      .welcome-name {
+        font-size: 22px;
+        font-weight: 700;
+        color: var(--text);
+        letter-spacing: -0.5px;
+        margin-bottom: 16px;
+      }
+      .welcome-divider {
+        width: 32px;
+        height: 2px;
+        background: var(--blue-light);
+        border-radius: 2px;
+        margin: 0 auto 16px;
+      }
+      .welcome-msg {
+        font-size: 13px;
+        color: var(--text-muted);
+        line-height: 1.65;
+        margin-bottom: 20px;
+      }
+      .welcome-msg strong {
+        color: var(--text);
+        font-weight: 600;
+      }
+      .welcome-pillars {
+        display: flex;
+        justify-content: center;
+        gap: 8px;
+        flex-wrap: wrap;
+        margin-bottom: 22px;
+      }
+      .welcome-pill {
+        background: var(--blue-light);
+        color: var(--blue);
+        border-radius: 20px;
+        padding: 4px 11px;
+        font-size: 11px;
+        font-weight: 600;
+        letter-spacing: 0.2px;
+      }
+      .welcome-btn {
+        width: 100%;
+        padding: 12px;
+        background: var(--blue);
+        color: white;
+        border: none;
+        border-radius: 10px;
+        font-family: "DM Sans", sans-serif;
+        font-size: 13px;
+        font-weight: 700;
+        cursor: pointer;
+        letter-spacing: 0.1px;
+        transition:
+          opacity 0.15s,
+          transform 0.1s;
+      }
+      .welcome-btn:hover {
+        opacity: 0.9;
+      }
+      .welcome-btn:active {
+        transform: scale(0.98);
+      }
+      .welcome-footer {
+        font-size: 10px;
+        color: var(--text-light);
+        margin-top: 12px;
+      }
+
+      /* ── RESPONSIVE ── */
+      @media (min-width: 480px) {
+        .auth-card {
+          padding: 40px 36px;
+        }
+        .tab-content {
+          padding: 20px;
+        }
+        .stats-grid {
+          grid-template-columns: repeat(4, 1fr);
+        }
+      }
+      @media (max-width: 340px) {
+        .tab-btn {
+          padding: 10px 10px;
+          font-size: 11px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- PWA INSTALL BANNER -->
+    <div id="pwa-banner">
+      <div class="pwa-banner-icon">📲</div>
+      <div class="pwa-banner-body">
+        <div class="pwa-banner-title">Add to Home Screen</div>
+        <div class="pwa-banner-sub">
+          Install this app for quick access anytime
+        </div>
+      </div>
+      <div class="pwa-banner-btns">
+        <button class="pwa-install-btn" onclick="openPwaModal()">How?</button>
+        <button
+          class="pwa-close-btn"
+          onclick="closePwaBanner()"
+          title="Dismiss"
+        >
+          ×
+        </button>
       </div>
     </div>
 
-    <div id="login-panel">
-      <div class="auth-title">Welcome back</div>
-      <div class="auth-sub">Sign in to track your good works</div>
-      <div class="auth-error" id="login-error"></div>
-      <div class="form-group">
-        <label class="form-label">Username</label>
-        <input class="form-input" id="login-user" type="text" placeholder="Enter username" autocomplete="off"/>
+    <!-- PWA HELP MODAL -->
+    <div class="pwa-modal-backdrop" id="pwa-modal">
+      <div class="pwa-modal">
+        <div class="pwa-modal-handle"></div>
+        <div class="pwa-modal-header">
+          <div class="pwa-modal-header-icon">📲</div>
+          <div>
+            <div class="pwa-modal-title">Add to Home Screen</div>
+            <div class="pwa-modal-subtitle">
+              Use Good Works like a native app
+            </div>
+          </div>
+          <button class="pwa-close-x" onclick="closePwaModal()">×</button>
+        </div>
+        <div class="os-tabs">
+          <button
+            class="os-tab active"
+            id="tab-ios"
+            onclick="switchOsTab('ios')"
+          >
+            <span class="os-tab-icon">🍎</span> iPhone / Safari
+          </button>
+          <button
+            class="os-tab"
+            id="tab-android"
+            onclick="switchOsTab('android')"
+          >
+            <span class="os-tab-icon">🤖</span> Android / Chrome
+          </button>
+        </div>
+        <div class="install-steps" id="steps-ios">
+          <div class="install-step">
+            <div class="step-num">1</div>
+            <div class="step-body">
+              <div class="step-title">Open in Safari</div>
+              <div class="step-desc">
+                Make sure you're using <strong>Safari</strong> browser. This
+                won't work in Chrome or other browsers on iPhone.
+              </div>
+            </div>
+          </div>
+          <div class="install-step">
+            <div class="step-num">2</div>
+            <div class="step-body">
+              <div class="step-title">Tap the Share button</div>
+              <div class="step-desc">
+                At the bottom of Safari, tap the
+                <span class="step-icon-inline">⬆</span>
+                <strong>Share</strong> icon (box with an arrow pointing up).
+              </div>
+            </div>
+          </div>
+          <div class="install-step">
+            <div class="step-num">3</div>
+            <div class="step-body">
+              <div class="step-title">Tap "Add to Home Screen"</div>
+              <div class="step-desc">
+                Scroll down the share sheet and tap
+                <span class="step-tag">+ Add to Home Screen</span>, then tap
+                <span class="step-tag">Add</span> to confirm.
+              </div>
+            </div>
+          </div>
+          <div class="install-step">
+            <div class="step-num">4</div>
+            <div class="step-body">
+              <div class="step-title">Done! Open from your home screen</div>
+              <div class="step-desc">
+                The Good Works icon will appear on your home screen. Tap it to
+                open the app in full screen — no browser bar!
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="install-steps" id="steps-android" style="display: none">
+          <div class="install-step">
+            <div class="step-num">1</div>
+            <div class="step-body">
+              <div class="step-title">Open in Chrome</div>
+              <div class="step-desc">
+                Make sure you're using <strong>Google Chrome</strong> browser on
+                your Android device.
+              </div>
+            </div>
+          </div>
+          <div class="install-step">
+            <div class="step-num">2</div>
+            <div class="step-body">
+              <div class="step-title">Tap the menu (⋮)</div>
+              <div class="step-desc">
+                Tap the <span class="step-icon-inline">⋮</span>
+                <strong>three-dot menu</strong> in the top-right corner of
+                Chrome.
+              </div>
+            </div>
+          </div>
+          <div class="install-step">
+            <div class="step-num">3</div>
+            <div class="step-body">
+              <div class="step-title">Tap "Add to Home screen"</div>
+              <div class="step-desc">
+                Select <span class="step-tag">Add to Home screen</span> from the
+                menu, then tap <span class="step-tag">Add</span> to confirm.
+              </div>
+            </div>
+          </div>
+          <div class="install-step">
+            <div class="step-num">4</div>
+            <div class="step-body">
+              <div class="step-title">Done! Open from your home screen</div>
+              <div class="step-desc">
+                The Good Works icon will appear on your home screen. It opens
+                like a native app — fast and full screen!
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="pwa-modal-tip">
+          ✅ Once installed, it works like a real app — no browser needed!
+        </div>
       </div>
-      <div class="form-group">
-        <label class="form-label">Passcode</label>
-        <input class="form-input" id="login-pass" type="password" placeholder="Enter passcode"/>
-      </div>
-      <button class="btn btn-primary" onclick="doLogin()">Sign In</button>
-      <div class="auth-toggle">No account? <span onclick="showRegister()">Create one</span></div>
     </div>
 
-    <div id="register-panel" style="display:none">
-      <div class="auth-title">Create account</div>
-      <div class="auth-sub">Start tracking your daily good works</div>
-      <div class="auth-error" id="reg-error"></div>
-      <div class="form-group">
-        <label class="form-label">Username</label>
-        <input class="form-input" id="reg-user" type="text" placeholder="Choose a username" autocomplete="off"/>
-      </div>
-      <div class="form-group">
-        <label class="form-label">Passcode</label>
-        <input class="form-input" id="reg-pass" type="password" placeholder="Choose a passcode"/>
-      </div>
-      <button class="btn btn-primary" onclick="doRegister()">Create Account</button>
-      <div class="auth-toggle">Have an account? <span onclick="showLogin()">Sign in</span></div>
-    </div>
-  </div>
-</div>
-
-<!-- APP -->
-<div id="app-screen" style="display:none; flex-direction:column; min-height:100vh;">
-
-  <div class="top-bar">
-    <div class="top-bar-left">
-      <div class="top-bar-icon">✦</div>
-      <div class="top-bar-title">Good Works</div>
-    </div>
-    <div class="top-bar-user">
-      <span class="user-badge" id="user-display"></span>
-      <button class="logout-btn" onclick="doLogout()">Sign out</button>
-    </div>
-  </div>
-
-  <div class="tabs-bar">
-    <button class="tab-btn active" onclick="switchTab('today', this)">Today</button>
-    <button class="tab-btn" onclick="switchTab('progress', this)">Progress</button>
-    <button class="tab-btn" onclick="switchTab('history', this)">History</button>
-  </div>
-
-  <!-- TODAY -->
-  <div class="tab-content active" id="tab-today">
-    <div class="date-header" id="today-date-label"></div>
-
-    <div class="add-card">
-      <div class="add-card-title">Add a Good Work</div>
-      <textarea class="form-textarea" id="work-input" placeholder="What good thing did you do today?"></textarea>
-      <div class="category-row" id="cat-row">
-        <div class="cat-chip selected" data-cat="Kindness" onclick="selectCat(this)">Kindness</div>
-        <div class="cat-chip" data-cat="Prayer" onclick="selectCat(this)">Prayer</div>
-        <div class="cat-chip" data-cat="Charity" onclick="selectCat(this)">Charity</div>
-        <div class="cat-chip" data-cat="Service" onclick="selectCat(this)">Service</div>
-        <div class="cat-chip" data-cat="Learning" onclick="selectCat(this)">Learning</div>
-        <div class="cat-chip" data-cat="Other" onclick="selectCat(this)">Other</div>
-      </div>
-      <div class="add-row">
-        <button class="btn-sm primary" onclick="addWork()">+ Add Work</button>
+    <!-- WELCOME MODAL -->
+    <div class="modal-backdrop" id="welcome-modal">
+      <div class="welcome-modal">
+        <span class="welcome-emoji">🌟</span>
+        <div class="welcome-hi">Welcome aboard</div>
+        <div class="welcome-name" id="welcome-username"></div>
+        <div class="welcome-divider"></div>
+        <div class="welcome-msg">
+          This is your space to <strong>focus on the good</strong>.<br /><br />
+          Every small act of kindness, every prayer, every moment of service —
+          it all matters. Here you can
+          <strong>record, reflect, and grow</strong> by seeing the positive
+          impact you make each day.
+        </div>
+        <div class="welcome-pillars">
+          <span class="welcome-pill">✦ Kindness</span>
+          <span class="welcome-pill">🤲 Service</span>
+          <span class="welcome-pill">📖 Growth</span>
+          <span class="welcome-pill">💛 Gratitude</span>
+        </div>
+        <button class="welcome-btn" onclick="closeWelcome()">
+          Start My Journey →
+        </button>
+        <div class="welcome-footer">
+          Your good works are recorded, never forgotten.
+        </div>
       </div>
     </div>
 
-    <div class="section-title" id="today-count-label">Today's Works</div>
-    <div class="works-list" id="today-list"></div>
-  </div>
+    <div class="loading-overlay" id="loading"><div class="spinner"></div></div>
+    <div class="toast" id="toast"></div>
 
-  <!-- PROGRESS -->
-  <div class="tab-content" id="tab-progress">
-    <div class="streak-card">
-      <div class="streak-icon">🔥</div>
-      <div>
-        <div class="streak-label">Current Streak</div>
-        <div class="streak-value" id="streak-val">0 days</div>
+    <!-- AUTH -->
+    <div id="auth-screen">
+      <div class="auth-card">
+        <div class="auth-logo-row">
+          <div class="auth-logo">
+            <div class="auth-logo-icon">✦</div>
+            <div>
+              <div class="auth-logo-text">Good Works</div>
+              <div class="auth-logo-sub">Daily Tracker</div>
+            </div>
+          </div>
+          <button
+            class="help-btn"
+            onclick="openPwaModal()"
+            title="How to install as app"
+          >
+            ?
+          </button>
+        </div>
+
+        <div id="login-panel">
+          <div class="auth-title">Welcome back</div>
+          <div class="auth-sub">Sign in to track your good works</div>
+          <div class="auth-error" id="login-error"></div>
+          <div class="form-group">
+            <label class="form-label">Username</label>
+            <input
+              class="form-input"
+              id="login-user"
+              type="text"
+              placeholder="Enter username"
+              autocomplete="off"
+            />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Passcode</label>
+            <input
+              class="form-input"
+              id="login-pass"
+              type="password"
+              placeholder="Enter passcode"
+            />
+          </div>
+          <button class="btn btn-primary" onclick="doLogin()">Sign In</button>
+          <div class="auth-toggle">
+            No account? <span onclick="showRegister()">Create one</span>
+          </div>
+        </div>
+
+        <div id="register-panel" style="display: none">
+          <div class="auth-title">Create account</div>
+          <div class="auth-sub">Start tracking your daily good works</div>
+          <div class="auth-error" id="reg-error"></div>
+          <div class="form-group">
+            <label class="form-label">Username</label>
+            <input
+              class="form-input"
+              id="reg-user"
+              type="text"
+              placeholder="Choose a username"
+              autocomplete="off"
+            />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Passcode</label>
+            <input
+              class="form-input"
+              id="reg-pass"
+              type="password"
+              placeholder="Choose a passcode"
+            />
+          </div>
+          <button class="btn btn-primary" onclick="doRegister()">
+            Create Account
+          </button>
+          <div class="auth-toggle">
+            Have an account? <span onclick="showLogin()">Sign in</span>
+          </div>
+        </div>
       </div>
     </div>
 
-    <div class="stats-grid">
-      <div class="stat-card">
-        <div class="stat-value" id="stat-total">0</div>
-        <div class="stat-label">Total Works</div>
+    <!-- APP -->
+    <div
+      id="app-screen"
+      style="display: none; flex-direction: column; min-height: 100vh"
+    >
+      <div class="top-bar">
+        <div class="top-bar-left">
+          <div class="top-bar-icon">✦</div>
+          <div class="top-bar-title">Good Works</div>
+        </div>
+        <div class="top-bar-user">
+          <span class="user-badge" id="user-display"></span>
+          <button class="logout-btn" onclick="doLogout()">Sign out</button>
+        </div>
       </div>
-      <div class="stat-card">
-        <div class="stat-value" id="stat-today">0</div>
-        <div class="stat-label">Today</div>
+      <div class="tabs-bar">
+        <button class="tab-btn active" onclick="switchTab('today', this)">
+          Today
+        </button>
+        <button class="tab-btn" onclick="switchTab('progress', this)">
+          Progress
+        </button>
+        <button class="tab-btn" onclick="switchTab('history', this)">
+          History
+        </button>
       </div>
-      <div class="stat-card">
-        <div class="stat-value" id="stat-days">0</div>
-        <div class="stat-label">Active Days</div>
+      <div class="tab-content active" id="tab-today">
+        <div class="date-header" id="today-date-label"></div>
+        <div class="add-card">
+          <div class="add-card-title">Add a Good Work</div>
+          <textarea
+            class="form-textarea"
+            id="work-input"
+            placeholder="What good thing did you do today?"
+          ></textarea>
+          <div class="category-row" id="cat-row">
+            <div
+              class="cat-chip selected"
+              data-cat="Kindness"
+              onclick="selectCat(this)"
+            >
+              Kindness
+            </div>
+            <div class="cat-chip" data-cat="Prayer" onclick="selectCat(this)">
+              Prayer
+            </div>
+            <div class="cat-chip" data-cat="Charity" onclick="selectCat(this)">
+              Charity
+            </div>
+            <div class="cat-chip" data-cat="Service" onclick="selectCat(this)">
+              Service
+            </div>
+            <div class="cat-chip" data-cat="Learning" onclick="selectCat(this)">
+              Learning
+            </div>
+            <div class="cat-chip" data-cat="Other" onclick="selectCat(this)">
+              Other
+            </div>
+          </div>
+          <div class="add-row">
+            <button class="btn-sm primary" onclick="addWork()">
+              + Add Work
+            </button>
+          </div>
+        </div>
+        <div class="section-title" id="today-count-label">Today's Works</div>
+        <div class="works-list" id="today-list"></div>
       </div>
-      <div class="stat-card">
-        <div class="stat-value" id="stat-avg">0</div>
-        <div class="stat-label">Avg / Day</div>
+      <div class="tab-content" id="tab-progress">
+        <div class="streak-card">
+          <div class="streak-icon">🔥</div>
+          <div>
+            <div class="streak-label">Current Streak</div>
+            <div class="streak-value" id="streak-val">0 days</div>
+          </div>
+        </div>
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-value" id="stat-total">0</div>
+            <div class="stat-label">Total Works</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value" id="stat-today">0</div>
+            <div class="stat-label">Today</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value" id="stat-days">0</div>
+            <div class="stat-label">Active Days</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value" id="stat-avg">0</div>
+            <div class="stat-label">Avg / Day</div>
+          </div>
+        </div>
+        <div class="section-title">By Category</div>
+        <div id="cat-progress-list"></div>
+      </div>
+      <div class="tab-content" id="tab-history">
+        <div class="section-title">All Past Works</div>
+        <div id="history-list"></div>
       </div>
     </div>
 
-    <div class="section-title">By Category</div>
-    <div id="cat-progress-list"></div>
-  </div>
+    <script>
+      // ─────────────────────────────────────────────────────────────────
+      //  ★  CONFIGURE THESE TWO VALUES — same in every deployed file  ★
+      //
+      //  Step 1: Go to https://jsonbin.io and sign up (free)
+      //  Step 2: Create an API Key under Account > API Keys
+      //  Step 3: Create a new Bin with content: {"users":{},"works":{}}
+      //  Step 4: Copy the Bin ID from the bin's URL or metadata
+      //  Step 5: Paste both values below and redeploy
+      //
+      const BIN_ID = "6a195eaaddf5aa59f7738ec8"; // e.g. '64f3a1b2e123456789abcdef'
+      const MASTER_KEY =
+        "$2a$10$iP5RJXsAb1nSoAOnFpxq9.s0d2XPGPfZgiizNmrNEcxValVz.gb9u"; // e.g. '$2a$10$...' (your JSONBin master key)
+      // ─────────────────────────────────────────────────────────────────
 
-  <!-- HISTORY -->
-  <div class="tab-content" id="tab-history">
-    <div class="section-title">All Past Works</div>
-    <div id="history-list"></div>
-  </div>
+      const JSONBIN_URL = "https://api.jsonbin.io/v3/b";
 
-</div>
+      function getHeaders() {
+        return {
+          "Content-Type": "application/json",
+          "X-Master-Key": MASTER_KEY,
+        };
+      }
 
-<script>
-// ── CONFIG ──────────────────────────────────────────────────────
-const BIN_ID   = ''; // Will be created on first use
-const MASTER_HASH = '$2a$10$i2AoNmGR0BgM0wyrzCi7KObRXEWGfFVoQ2V9tpN5ZFzKUDPQUixJm';
-const JSONBIN_URL = 'https://api.jsonbin.io/v3/b';
-const HEADERS = {
-  'Content-Type': 'application/json',
-  'X-Master-Key': MASTER_HASH
-};
+      // ── STATE ────────────────────────────────────────────────────────
+      let appData = { users: {}, works: {} };
+      let currentUser = "";
+      let selectedCat = "Kindness";
 
-// ── STATE ────────────────────────────────────────────────────────
-let appData  = { users: {}, works: {} }; // works[username] = [{id,text,cat,date,time}]
-let binId    = localStorage.getItem('gw_bin_id') || '';
-let currentUser = '';
-let selectedCat = 'Kindness';
+      // ── PWA ──────────────────────────────────────────────────────────
+      function initPwaBanner() {
+        const dismissed = localStorage.getItem("gw_pwa_dismissed");
+        const isStandalone =
+          window.matchMedia("(display-mode: standalone)").matches ||
+          window.navigator.standalone === true;
+        if (!dismissed && !isStandalone) {
+          document.getElementById("pwa-banner").classList.add("show");
+        }
+        const ua = navigator.userAgent;
+        switchOsTab(/android/i.test(ua) ? "android" : "ios");
+      }
 
-// ── JSONBIN ──────────────────────────────────────────────────────
-async function loadData() {
-  showLoading(true);
-  try {
-    if (!binId) {
-      // Create new bin
-      const r = await fetch(JSONBIN_URL, {
-        method: 'POST',
-        headers: { ...HEADERS, 'X-Bin-Private': 'false', 'X-Bin-Name': 'goodworks' },
-        body: JSON.stringify(appData)
-      });
-      const j = await r.json();
-      if (j.metadata && j.metadata.id) {
-        binId = j.metadata.id;
-        localStorage.setItem('gw_bin_id', binId);
-        appData = j.record || appData;
-      } else throw new Error('Bin creation failed');
-    } else {
-      const r = await fetch(`${JSONBIN_URL}/${binId}/latest`, { headers: HEADERS });
-      const j = await r.json();
-      appData = j.record || { users: {}, works: {} };
-    }
-  } catch(e) {
-    console.error(e);
-    showToast('Could not connect to storage');
-  }
-  showLoading(false);
-}
+      function closePwaBanner() {
+        document.getElementById("pwa-banner").classList.remove("show");
+        localStorage.setItem("gw_pwa_dismissed", "1");
+      }
 
-async function saveData() {
-  try {
-    await fetch(`${JSONBIN_URL}/${binId}`, {
-      method: 'PUT',
-      headers: HEADERS,
-      body: JSON.stringify(appData)
-    });
-  } catch(e) { showToast('Save failed — check connection'); }
-}
+      function openPwaModal() {
+        switchOsTab(/android/i.test(navigator.userAgent) ? "android" : "ios");
+        document.getElementById("pwa-modal").classList.add("visible");
+      }
 
-function closeWelcome() {
-  const m = document.getElementById('welcome-modal');
-  m.classList.remove('visible');
-}
+      function closePwaModal() {
+        document.getElementById("pwa-modal").classList.remove("visible");
+      }
 
-function showWelcome(username) {
-  document.getElementById('welcome-username').textContent = username.charAt(0).toUpperCase() + username.slice(1);
-  const m = document.getElementById('welcome-modal');
-  setTimeout(() => m.classList.add('visible'), 400);
-}
+      function switchOsTab(os) {
+        document
+          .getElementById("tab-ios")
+          .classList.toggle("active", os === "ios");
+        document
+          .getElementById("tab-android")
+          .classList.toggle("active", os === "android");
+        document.getElementById("steps-ios").style.display =
+          os === "ios" ? "flex" : "none";
+        document.getElementById("steps-android").style.display =
+          os === "android" ? "flex" : "none";
+      }
 
-// ── AUTH ─────────────────────────────────────────────────────────
-function showLogin() {
-  document.getElementById('login-panel').style.display = '';
-  document.getElementById('register-panel').style.display = 'none';
-}
+      document
+        .getElementById("pwa-modal")
+        .addEventListener("click", function (e) {
+          if (e.target === this) closePwaModal();
+        });
 
-function showRegister() {
-  document.getElementById('login-panel').style.display = 'none';
-  document.getElementById('register-panel').style.display = '';
-}
+      // ── JSONBIN ──────────────────────────────────────────────────────
+      async function loadData() {
+        // Guard: BIN_ID must be set
+        if (!BIN_ID || !MASTER_KEY) {
+          document.getElementById("config-notice").style.display = "block";
+          return;
+        }
+        showLoading(true);
+        try {
+          const r = await fetch(`${JSONBIN_URL}/${BIN_ID}/latest`, {
+            headers: getHeaders(),
+          });
+          if (!r.ok) throw new Error(`HTTP ${r.status}`);
+          const j = await r.json();
+          appData = j.record || { users: {}, works: {} };
+          // Ensure structure is valid
+          if (!appData.users) appData.users = {};
+          if (!appData.works) appData.works = {};
+        } catch (e) {
+          console.error("loadData error:", e);
+          showToast(
+            "Could not connect to storage — check your BIN_ID and MASTER_KEY",
+          );
+        }
+        showLoading(false);
+      }
 
-async function doLogin() {
-  const u = document.getElementById('login-user').value.trim().toLowerCase();
-  const p = document.getElementById('login-pass').value;
-  const err = document.getElementById('login-error');
-  if (!u || !p) { showErr(err, 'Please fill in all fields'); return; }
+      async function saveData() {
+        if (!BIN_ID || !MASTER_KEY) return;
+        try {
+          const r = await fetch(`${JSONBIN_URL}/${BIN_ID}`, {
+            method: "PUT",
+            headers: getHeaders(),
+            body: JSON.stringify(appData),
+          });
+          if (!r.ok) throw new Error(`HTTP ${r.status}`);
+        } catch (e) {
+          console.error("saveData error:", e);
+          showToast("Save failed — check connection");
+        }
+      }
 
-  if (!appData.users[u]) { showErr(err, 'Username not found'); return; }
-  if (appData.users[u].pass !== btoa(p)) { showErr(err, 'Wrong passcode'); return; }
+      // ── WELCOME ──────────────────────────────────────────────────────
+      function showWelcome(username) {
+        document.getElementById("welcome-username").textContent =
+          username.charAt(0).toUpperCase() + username.slice(1);
+        setTimeout(
+          () =>
+            document.getElementById("welcome-modal").classList.add("visible"),
+          400,
+        );
+      }
 
-  err.style.display = 'none';
-  currentUser = u;
-  localStorage.setItem('gw_user', u);
-  enterApp();
-}
+      function closeWelcome() {
+        document.getElementById("welcome-modal").classList.remove("visible");
+        const dismissed = localStorage.getItem("gw_pwa_dismissed");
+        const isStandalone =
+          window.matchMedia("(display-mode: standalone)").matches ||
+          window.navigator.standalone === true;
+        if (!dismissed && !isStandalone) {
+          setTimeout(
+            () => showToast("💡 Tap ? to install this app on your home screen"),
+            800,
+          );
+        }
+      }
 
-async function doRegister() {
-  const u = document.getElementById('reg-user').value.trim().toLowerCase();
-  const p = document.getElementById('reg-pass').value;
-  const err = document.getElementById('reg-error');
-  if (!u || !p) { showErr(err, 'Please fill in all fields'); return; }
-  if (u.length < 2) { showErr(err, 'Username too short'); return; }
-  if (p.length < 3) { showErr(err, 'Passcode too short'); return; }
-  if (appData.users[u]) { showErr(err, 'Username already taken'); return; }
+      // ── AUTH ─────────────────────────────────────────────────────────
+      function showLogin() {
+        document.getElementById("login-panel").style.display = "";
+        document.getElementById("register-panel").style.display = "none";
+      }
 
-  appData.users[u] = { pass: btoa(p), created: new Date().toISOString() };
-  if (!appData.works[u]) appData.works[u] = [];
-  await saveData();
+      function showRegister() {
+        document.getElementById("login-panel").style.display = "none";
+        document.getElementById("register-panel").style.display = "";
+      }
 
-  err.style.display = 'none';
-  currentUser = u;
-  localStorage.setItem('gw_user', u);
-  enterApp();
-  showWelcome(u);
-}
+      async function doLogin() {
+        const u = document
+          .getElementById("login-user")
+          .value.trim()
+          .toLowerCase();
+        const p = document.getElementById("login-pass").value;
+        const err = document.getElementById("login-error");
+        if (!u || !p) {
+          showErr(err, "Please fill in all fields");
+          return;
+        }
 
-function doLogout() {
-  currentUser = '';
-  localStorage.removeItem('gw_user');
-  document.getElementById('app-screen').style.display = 'none';
-  document.getElementById('auth-screen').style.display = 'flex';
-  document.getElementById('login-user').value = '';
-  document.getElementById('login-pass').value = '';
-  showLogin();
-}
+        // Always fetch fresh data before login so we have the latest users
+        await loadData();
 
-function showErr(el, msg) {
-  el.textContent = msg;
-  el.style.display = 'block';
-}
+        if (!appData.users[u]) {
+          showErr(err, "Username not found");
+          return;
+        }
+        if (appData.users[u].pass !== btoa(p)) {
+          showErr(err, "Wrong passcode");
+          return;
+        }
 
-// ── APP ENTER ────────────────────────────────────────────────────
-function enterApp() {
-  document.getElementById('auth-screen').style.display = 'none';
-  document.getElementById('app-screen').style.display = 'flex';
-  document.getElementById('user-display').textContent = currentUser;
-  document.getElementById('today-date-label').textContent = formatDateFull(today());
-  renderToday();
-  renderProgress();
-  renderHistory();
-}
+        err.style.display = "none";
+        currentUser = u;
+        localStorage.setItem("gw_user", u);
+        enterApp();
+      }
 
-// ── WORKS ─────────────────────────────────────────────────────────
-function myWorks() {
-  if (!appData.works[currentUser]) appData.works[currentUser] = [];
-  return appData.works[currentUser];
-}
+      async function doRegister() {
+        const u = document
+          .getElementById("reg-user")
+          .value.trim()
+          .toLowerCase();
+        const p = document.getElementById("reg-pass").value;
+        const err = document.getElementById("reg-error");
+        if (!u || !p) {
+          showErr(err, "Please fill in all fields");
+          return;
+        }
+        if (u.length < 2) {
+          showErr(err, "Username too short");
+          return;
+        }
+        if (p.length < 3) {
+          showErr(err, "Passcode too short");
+          return;
+        }
 
-function today() {
-  return new Date().toISOString().slice(0, 10);
-}
+        // Always fetch fresh data before register to check for duplicates
+        await loadData();
 
-function todayWorks() {
-  return myWorks().filter(w => w.date === today());
-}
+        if (appData.users[u]) {
+          showErr(err, "Username already taken");
+          return;
+        }
 
-function selectCat(el) {
-  document.querySelectorAll('.cat-chip').forEach(c => c.classList.remove('selected'));
-  el.classList.add('selected');
-  selectedCat = el.dataset.cat;
-}
+        appData.users[u] = { pass: btoa(p), created: new Date().toISOString() };
+        if (!appData.works[u]) appData.works[u] = [];
+        await saveData();
 
-async function addWork() {
-  const txt = document.getElementById('work-input').value.trim();
-  if (!txt) { showToast('Write something first!'); return; }
+        err.style.display = "none";
+        currentUser = u;
+        localStorage.setItem("gw_user", u);
+        closePwaBanner();
+        enterApp();
+        showWelcome(u);
+      }
 
-  const work = {
-    id: Date.now().toString(),
-    text: txt,
-    cat: selectedCat,
-    date: today(),
-    time: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true })
-  };
+      function doLogout() {
+        currentUser = "";
+        localStorage.removeItem("gw_user");
+        document.getElementById("app-screen").style.display = "none";
+        document.getElementById("auth-screen").style.display = "flex";
+        document.getElementById("login-user").value = "";
+        document.getElementById("login-pass").value = "";
+        showLogin();
+        initPwaBanner();
+      }
 
-  myWorks().push(work);
-  document.getElementById('work-input').value = '';
-  await saveData();
-  renderToday();
-  renderProgress();
-  renderHistory();
-  showToast('Good work added! ✦');
-}
+      function showErr(el, msg) {
+        el.textContent = msg;
+        el.style.display = "block";
+      }
 
-async function deleteWork(id) {
-  appData.works[currentUser] = myWorks().filter(w => w.id !== id);
-  await saveData();
-  renderToday();
-  renderProgress();
-  renderHistory();
-}
+      // ── APP ENTER ────────────────────────────────────────────────────
+      function enterApp() {
+        document.getElementById("auth-screen").style.display = "none";
+        document.getElementById("app-screen").style.display = "flex";
+        document.getElementById("user-display").textContent = currentUser;
+        document.getElementById("today-date-label").textContent =
+          formatDateFull(today());
+        renderToday();
+        renderProgress();
+        renderHistory();
+      }
 
-// ── RENDER ────────────────────────────────────────────────────────
-function renderWorkItem(w, showDel = true) {
-  return `
+      // ── WORKS ─────────────────────────────────────────────────────────
+      function myWorks() {
+        if (!appData.works[currentUser]) appData.works[currentUser] = [];
+        return appData.works[currentUser];
+      }
+
+      function today() {
+        return new Date().toISOString().slice(0, 10);
+      }
+
+      function todayWorks() {
+        return myWorks().filter((w) => w.date === today());
+      }
+
+      function selectCat(el) {
+        document
+          .querySelectorAll(".cat-chip")
+          .forEach((c) => c.classList.remove("selected"));
+        el.classList.add("selected");
+        selectedCat = el.dataset.cat;
+      }
+
+      async function addWork() {
+        const txt = document.getElementById("work-input").value.trim();
+        if (!txt) {
+          showToast("Write something first!");
+          return;
+        }
+
+        const work = {
+          id: Date.now().toString(),
+          text: txt,
+          cat: selectedCat,
+          date: today(),
+          time: new Date().toLocaleTimeString("en-US", {
+            hour: "2-digit",
+            minute: "2-digit",
+            hour12: true,
+          }),
+        };
+
+        myWorks().push(work);
+        document.getElementById("work-input").value = "";
+        await saveData();
+        renderToday();
+        renderProgress();
+        renderHistory();
+        showToast("Good work added! ✦");
+      }
+
+      async function deleteWork(id) {
+        appData.works[currentUser] = myWorks().filter((w) => w.id !== id);
+        await saveData();
+        renderToday();
+        renderProgress();
+        renderHistory();
+      }
+
+      // ── RENDER ────────────────────────────────────────────────────────
+      function renderWorkItem(w, showDel = true) {
+        return `
     <div class="work-item">
       <div class="work-check">✓</div>
       <div class="work-body">
@@ -1139,150 +1785,175 @@ function renderWorkItem(w, showDel = true) {
           <span class="work-time">${w.time}</span>
         </div>
       </div>
-      ${showDel ? `<button class="work-del" onclick="deleteWork('${w.id}')" title="Remove">×</button>` : ''}
+      ${showDel ? `<button class="work-del" onclick="deleteWork('${w.id}')" title="Remove">×</button>` : ""}
     </div>`;
-}
+      }
 
-function renderToday() {
-  const tw = todayWorks();
-  const list = document.getElementById('today-list');
-  const label = document.getElementById('today-count-label');
-  label.textContent = `Today's Works (${tw.length})`;
-  if (tw.length === 0) {
-    list.innerHTML = `<div class="empty-state"><div class="empty-icon">☀️</div><div class="empty-text">No works yet today</div><div class="empty-sub">Add your first good work above</div></div>`;
-  } else {
-    list.innerHTML = [...tw].reverse().map(w => renderWorkItem(w)).join('');
-  }
-}
+      function renderToday() {
+        const tw = todayWorks();
+        const list = document.getElementById("today-list");
+        const label = document.getElementById("today-count-label");
+        label.textContent = `Today's Works (${tw.length})`;
+        list.innerHTML =
+          tw.length === 0
+            ? `<div class="empty-state"><div class="empty-icon">☀️</div><div class="empty-text">No works yet today</div><div class="empty-sub">Add your first good work above</div></div>`
+            : [...tw]
+                .reverse()
+                .map((w) => renderWorkItem(w))
+                .join("");
+      }
 
-function renderProgress() {
-  const all = myWorks();
-  const tw = todayWorks();
+      function renderProgress() {
+        const all = myWorks();
+        const tw = todayWorks();
 
-  // Stats
-  document.getElementById('stat-total').textContent = all.length;
-  document.getElementById('stat-today').textContent = tw.length;
+        document.getElementById("stat-total").textContent = all.length;
+        document.getElementById("stat-today").textContent = tw.length;
 
-  // Unique days
-  const days = [...new Set(all.map(w => w.date))];
-  document.getElementById('stat-days').textContent = days.length;
-  document.getElementById('stat-avg').textContent = days.length ? (all.length / days.length).toFixed(1) : '0';
+        const days = [...new Set(all.map((w) => w.date))];
+        document.getElementById("stat-days").textContent = days.length;
+        document.getElementById("stat-avg").textContent = days.length
+          ? (all.length / days.length).toFixed(1)
+          : "0";
 
-  // Streak
-  let streak = 0;
-  const d = new Date();
-  while (true) {
-    const ds = d.toISOString().slice(0, 10);
-    if (all.some(w => w.date === ds)) { streak++; d.setDate(d.getDate() - 1); }
-    else break;
-  }
-  document.getElementById('streak-val').textContent = streak + (streak === 1 ? ' day' : ' days');
+        let streak = 0;
+        const d = new Date();
+        while (true) {
+          const ds = d.toISOString().slice(0, 10);
+          if (all.some((w) => w.date === ds)) {
+            streak++;
+            d.setDate(d.getDate() - 1);
+          } else break;
+        }
+        document.getElementById("streak-val").textContent =
+          streak + (streak === 1 ? " day" : " days");
 
-  // Category breakdown
-  const cats = {};
-  all.forEach(w => { cats[w.cat] = (cats[w.cat] || 0) + 1; });
-  const sorted = Object.entries(cats).sort((a, b) => b[1] - a[1]);
-  const max = sorted[0]?.[1] || 1;
-  const catEl = document.getElementById('cat-progress-list');
-  if (sorted.length === 0) {
-    catEl.innerHTML = `<div class="empty-state"><div class="empty-text">No works yet</div></div>`;
-  } else {
-    catEl.innerHTML = sorted.map(([cat, cnt]) => `
+        const cats = {};
+        all.forEach((w) => {
+          cats[w.cat] = (cats[w.cat] || 0) + 1;
+        });
+        const sorted = Object.entries(cats).sort((a, b) => b[1] - a[1]);
+        const max = sorted[0]?.[1] || 1;
+        const catEl = document.getElementById("cat-progress-list");
+        catEl.innerHTML =
+          sorted.length === 0
+            ? `<div class="empty-state"><div class="empty-text">No works yet</div></div>`
+            : sorted
+                .map(
+                  ([cat, cnt]) => `
       <div class="cat-progress-item">
         <div class="cat-progress-row">
           <span class="cat-progress-name">${cat}</span>
           <span class="cat-progress-count">${cnt}</span>
         </div>
         <div class="progress-bar-wrap">
-          <div class="progress-bar-fill" style="width:${(cnt/max*100).toFixed(0)}%"></div>
+          <div class="progress-bar-fill" style="width:${((cnt / max) * 100).toFixed(0)}%"></div>
         </div>
-      </div>`).join('');
-  }
-}
+      </div>`,
+                )
+                .join("");
+      }
 
-function renderHistory() {
-  const all = myWorks();
-  const el = document.getElementById('history-list');
+      function renderHistory() {
+        const all = myWorks();
+        const el = document.getElementById("history-list");
+        if (all.length === 0) {
+          el.innerHTML = `<div class="empty-state"><div class="empty-icon">📖</div><div class="empty-text">No history yet</div><div class="empty-sub">Your past works will appear here</div></div>`;
+          return;
+        }
+        const byDate = {};
+        all.forEach((w) => {
+          if (!byDate[w.date]) byDate[w.date] = [];
+          byDate[w.date].push(w);
+        });
+        const dates = Object.keys(byDate).sort((a, b) => b.localeCompare(a));
+        el.innerHTML = dates
+          .map((date) => {
+            const works = byDate[date];
+            const isToday = date === today();
+            return `<div class="history-day">
+      <div class="history-day-label">
+        ${isToday ? "Today" : formatDateShort(date)}
+        <span class="history-day-count">${works.length}</span>
+      </div>
+      ${[...works]
+        .reverse()
+        .map((w) => renderWorkItem(w, false))
+        .join("")}
+    </div>`;
+          })
+          .join("");
+      }
 
-  if (all.length === 0) {
-    el.innerHTML = `<div class="empty-state"><div class="empty-icon">📖</div><div class="empty-text">No history yet</div><div class="empty-sub">Your past works will appear here</div></div>`;
-    return;
-  }
+      // ── TABS ──────────────────────────────────────────────────────────
+      function switchTab(name, btn) {
+        document
+          .querySelectorAll(".tab-content")
+          .forEach((t) => t.classList.remove("active"));
+        document
+          .querySelectorAll(".tab-btn")
+          .forEach((b) => b.classList.remove("active"));
+        document.getElementById("tab-" + name).classList.add("active");
+        btn.classList.add("active");
+        if (name === "progress") renderProgress();
+        if (name === "history") renderHistory();
+      }
 
-  // Group by date descending
-  const byDate = {};
-  all.forEach(w => {
-    if (!byDate[w.date]) byDate[w.date] = [];
-    byDate[w.date].push(w);
-  });
+      // ── UTILS ─────────────────────────────────────────────────────────
+      function escHtml(str) {
+        return str
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;");
+      }
+      function formatDateFull(d) {
+        return new Date(d + "T12:00:00").toLocaleDateString("en-US", {
+          weekday: "long",
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+        });
+      }
+      function formatDateShort(d) {
+        return new Date(d + "T12:00:00").toLocaleDateString("en-US", {
+          weekday: "short",
+          month: "short",
+          day: "numeric",
+        });
+      }
+      function showLoading(v) {
+        document.getElementById("loading").style.display = v ? "flex" : "none";
+      }
+      let toastTimer;
+      function showToast(msg) {
+        const t = document.getElementById("toast");
+        t.textContent = msg;
+        t.classList.add("show");
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => t.classList.remove("show"), 2200);
+      }
 
-  const dates = Object.keys(byDate).sort((a, b) => b.localeCompare(a));
-  el.innerHTML = dates.map(date => {
-    const works = byDate[date];
-    const isToday = date === today();
-    const label = isToday ? 'Today' : formatDateShort(date);
-    return `
-      <div class="history-day">
-        <div class="history-day-label">
-          ${label}
-          <span class="history-day-count">${works.length}</span>
-        </div>
-        ${[...works].reverse().map(w => renderWorkItem(w, false)).join('')}
-      </div>`;
-  }).join('');
-}
+      // ── INIT ──────────────────────────────────────────────────────────
+      (async () => {
+        await loadData();
+        const savedUser = localStorage.getItem("gw_user");
+        // Re-validate the saved session against the freshly loaded data
+        if (savedUser && appData.users && appData.users[savedUser]) {
+          currentUser = savedUser;
+          enterApp();
+        } else {
+          // Clear stale session if user no longer exists
+          if (savedUser) localStorage.removeItem("gw_user");
+          initPwaBanner();
+        }
+      })();
 
-// ── TABS ──────────────────────────────────────────────────────────
-function switchTab(name, btn) {
-  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-  document.getElementById('tab-' + name).classList.add('active');
-  btn.classList.add('active');
-  if (name === 'progress') renderProgress();
-  if (name === 'history') renderHistory();
-}
-
-// ── UTILS ─────────────────────────────────────────────────────────
-function escHtml(str) {
-  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-}
-
-function formatDateFull(d) {
-  return new Date(d + 'T12:00:00').toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
-}
-
-function formatDateShort(d) {
-  return new Date(d + 'T12:00:00').toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
-}
-
-function showLoading(v) {
-  document.getElementById('loading').style.display = v ? 'flex' : 'none';
-}
-
-let toastTimer;
-function showToast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.add('show');
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => t.classList.remove('show'), 2200);
-}
-
-// ── INIT ──────────────────────────────────────────────────────────
-(async () => {
-  await loadData();
-  const savedUser = localStorage.getItem('gw_user');
-  if (savedUser && appData.users && appData.users[savedUser]) {
-    currentUser = savedUser;
-    enterApp();
-  }
-})();
-
-// Enter key support
-document.addEventListener('keydown', e => {
-  if (e.key === 'Enter' && e.target.id === 'login-pass') doLogin();
-  if (e.key === 'Enter' && e.target.id === 'reg-pass') doRegister();
-});
-</script>
-</body>
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" && e.target.id === "login-pass") doLogin();
+        if (e.key === "Enter" && e.target.id === "reg-pass") doRegister();
+        if (e.key === "Escape") closePwaModal();
+      });
+    </script>
+  </body>
 </html>
